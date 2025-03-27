@@ -1,43 +1,13 @@
 import 'dart:math' as math;
+import 'package:echec/ParametrePartie.dart';
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'ParametrePartie.dart';
 
-class TitleScreen extends StatelessWidget {
-  const TitleScreen({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF4b4847),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Chess.fr',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigue vers la page principale
-                Navigator.pushNamed(context, '/home');
-              },
-              child: const Text('Commencer'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 void main() {
   runApp(const MyApp());
@@ -51,28 +21,80 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chess.fr',
-      home: const MyHomePage(),
+      home: const EcranTitre(),
     );
   }
 }
 
 
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class EcranTitre extends StatefulWidget {
+  const EcranTitre({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<EcranTitre> createState() => _TitleScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _TitleScreenState extends State<EcranTitre> {
 
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      body:Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(padding: const EdgeInsets.only(top:50),
+          child: Image.asset('assets/logo2.png',width: 200,height: 200,),
+          ),
+          ElevatedButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Parametrepartie()),
+              );
+          },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+           
+           ),
+           child: const Text('Commencer'),
+           ),
+           Padding(
+            padding: const EdgeInsets.only(bottom: 50),
+            child: ElevatedButton(onPressed: () {
+              Navigator.pushNamed(context, '/parametres');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            child: const Text('Paramètres'),
+            ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: ElevatedButton(
+                onPressed: () {
+                  print("Bouton droit appuyé");
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  textStyle: const TextStyle(fontSize: 16),
+                ),
+                child: const Text('Option 2'),
+              ),
+              
+            ),
+        ],
+      )
     );
   }
 }

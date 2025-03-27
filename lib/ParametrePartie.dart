@@ -4,40 +4,8 @@ import 'widget_timer.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'main.dart';
 
-class TitleScreen extends StatelessWidget {
-  const TitleScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF4b4847),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Chess.fr',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigue vers la page principale
-                Navigator.pushNamed(context, '/home');
-              },
-              child: const Text('Commencer'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 void main() {
   runApp(const MyApp());
@@ -51,21 +19,31 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chess.fr',
-      home: const MyHomePage(),
+      theme: ThemeData(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black, // Couleur de fond par défaut
+            foregroundColor: Colors.white, // Couleur du texte par défaut
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      home: const Parametrepartie(),
     );
   }
 }
 
 
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class Parametrepartie extends StatefulWidget {
+  const Parametrepartie({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Parametrepartie> createState() => _ParametrePartieState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ParametrePartieState extends State<Parametrepartie> {
 
 
   @override
@@ -73,6 +51,67 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      body: Center(
+        child:Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                print("bouton1");
+              },
+              style:ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: const Text('Timer'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                print("bouton2");
+              },
+                style:ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: const Text('Plateau'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                print("bouton3");
+              },
+                style:ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: const Text('Pions'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  );
+              },
+              style:ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              child: const Text('Jouer'),
+            ),
+          ],
+      ),)
     );
   }
 }
