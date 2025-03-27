@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.10.0
   flutter_test:
     sdk: flutter
 
@@ -51,6 +52,20 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/images/CB.png
+    - assets/images/CN.png
+    - assets/images/FB.png
+    - assets/images/FN.png
+    - assets/images/RB.png
+    - assets/images/RN.png
+    - assets/images/TB.png
+    - assets/images/TN.png
+    - assets/images/DB.png
+    - assets/images/DN.png
+    - assets/images/PB.png
+    - assets/images/PN.png
+    - assets/logo.png
 
 
   # The following line ensures that the Material Icons font is
@@ -59,20 +74,7 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-assets:
-- assets/images/CB.png
-- assets/images/CN.png
-- assets/images/FB.png
-- assets/images/FN.png
-- assets/images/RB.png
-- assets/images/RN.png
-- assets/images/TB.png
-- assets/images/TN.png
-- assets/images/DB.png
-- assets/images/DN.png
-- assets/images/PB.png
-- assets/images/PN.png
-- assets/logo.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -99,6 +101,7 @@ assets:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  
 flutter_icons:
   android: "launcher_icon"
   ios: true
