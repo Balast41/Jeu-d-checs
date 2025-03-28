@@ -67,6 +67,14 @@ flutter:
     - assets/images/PN.png
     - assets/logo.png
     - assets/logo2.png
+    - assets/Minecraft/CP.png
+    - assets/Minecraft/CC.png
+    - assets/Minecraft/FE.png
+    - assets/Minecraft/DA.png
+    - assets/Minecraft/RS.png
+    - assets/Minecraft/TG.png
+    - assets/ChoixPions/Joueur1/
+    - assets/ChoixPions/Joueur2/
 
 
   # The following line ensures that the Material Icons font is

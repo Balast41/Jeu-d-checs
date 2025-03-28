@@ -1,9 +1,5 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'widget_timer.dart';
-import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'main.dart';
 
 
@@ -45,6 +41,36 @@ class Parametrepartie extends StatefulWidget {
 
 class _ParametrePartieState extends State<Parametrepartie> {
 
+final List<String> choixPionsJ1=[
+  'assets/ChoixPions/Joueur1/PB.png',
+  'assets/ChoixPions/Joueur1/CP.png',
+];
+
+final List<String> choixPionsJ2=[
+  'assets/ChoixPions/Joueur2/PN.png',
+  'assets/ChoixPions/Joueur2/CP.png',
+];
+
+int indexJ1=0;
+int indexJ2=0;
+
+  void changerSkinJ1(int direction){
+    setState(() {
+      indexJ1=(indexJ1+direction)%choixPionsJ1.length;
+      if((indexJ1<0)){
+        indexJ1=choixPionsJ1.length-1;
+      }
+    });
+  }
+    void changerSkinJ2(int direction){
+    setState(() {
+      indexJ2=(indexJ2+direction)%choixPionsJ2.length;
+      if((indexJ2<0)){
+        indexJ2=choixPionsJ2.length-1;
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +110,79 @@ class _ParametrePartieState extends State<Parametrepartie> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                print("bouton3");
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context){
+                    return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
+                    return AlertDialog(
+                      title: const Center(child:Text('Pions'),),
+                      
+                      content:Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Joueur 1'),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon:const Icon(Icons.arrow_left),
+                                onPressed: () {
+                                  setState(() {
+                                    indexJ1 = (indexJ1 - 1) % choixPionsJ1.length;
+                                    if (indexJ1 < 0) indexJ1 = choixPionsJ1.length - 1;
+                                  });
+                                },
+                              ),
+                              Image.asset(choixPionsJ1[indexJ1],width: 50,height: 50,errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.error, size: 50); // Affiche une icône d'erreur
+                                  },),
+                              IconButton(
+                                icon:const Icon(Icons.arrow_right),
+                                onPressed: () {
+                                  setState(() {
+                                    indexJ1 = (indexJ1 + 1) % choixPionsJ1.length;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          const Text('Joueur 2',),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon:const Icon(Icons.arrow_left),
+                                onPressed: () {
+                                  setState(() {
+                                    indexJ2 = (indexJ2 - 1) % choixPionsJ2.length;
+                                    if (indexJ2 < 0) indexJ2 = choixPionsJ2.length - 1;
+                                  });
+                                },
+                              ),
+                              Image.asset(choixPionsJ2[indexJ2],width: 50,height: 50,errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.error, size: 50); // Affiche une icône d'erreur
+                                    },),
+                              IconButton(
+                                icon:const Icon(Icons.arrow_right),
+                                onPressed: () {
+                                  setState(() {
+                                    indexJ2 = (indexJ2 + 1) % choixPionsJ2.length;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                         
+                        ],
+                      ),
+                    );
+                  },
+                );
               },
+            );
+          },
                 style:ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
@@ -111,7 +208,10 @@ class _ParametrePartieState extends State<Parametrepartie> {
               child: const Text('Jouer'),
             ),
           ],
-      ),)
+      ),
+      
+      ),
+
     );
   }
 }
