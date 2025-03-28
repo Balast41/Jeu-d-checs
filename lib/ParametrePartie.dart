@@ -2,8 +2,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
 import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'main.dart';
 
 

@@ -2,8 +2,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
 
-
-
 abstract class Piece {
   final String name;
   final Color color;
@@ -26,7 +24,11 @@ class Roi extends Piece {
       String imagePath = color == Colors.white
       ? 'assets/images/RB.png'
       : 'assets/images/RN.png';
-    return Image.asset(imagePath, width: size, height: size);
+    
+    return Transform.rotate(
+      angle: color == Colors.black ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size),
+    );
   }
 
   @override
@@ -59,7 +61,11 @@ class Reine extends Piece {
       String imagePath = color == Colors.white
       ? 'assets/images/DB.png'
       : 'assets/images/DN.png';
-    return Image.asset(imagePath, width: size, height: size);
+
+    return Transform.rotate(
+      angle: color == Colors.black ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size),
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -100,7 +106,11 @@ class Tour extends Piece {
       String imagePath = color == Colors.white
       ? 'assets/images/TB.png'
       : 'assets/images/TN.png';
-    return Image.asset(imagePath, width: size, height: size);
+
+    return Transform.rotate(
+      angle: color == Colors.black ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size),
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -140,7 +150,11 @@ class Fou extends Piece {
       String imagePath = color == Colors.white
       ? 'assets/images/FB.png'
       : 'assets/images/FN.png';
-    return Image.asset(imagePath, width: size, height: size);
+
+    return Transform.rotate(
+      angle: color == Colors.black ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size),
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -180,7 +194,11 @@ class Cavalier extends Piece {
       String imagePath = color == Colors.white
       ? 'assets/images/CB.png'
       : 'assets/images/CN.png';
-    return Image.asset(imagePath, width: size, height: size);
+
+    return Transform.rotate(
+      angle: color == Colors.black ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size),
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -209,10 +227,13 @@ class Pion extends Piece {
 
   @override
   Widget buildPiece(double size) {
-      String imagePath = color == Colors.white
+    String imagePath = color == Colors.white
       ? 'assets/images/PB.png'
       : 'assets/images/PN.png';
-    return Image.asset(imagePath, width: size, height: size);
+    return Transform.rotate(
+      angle: color == Colors.black ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size),
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -282,8 +303,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String _joueur = "Joueur 1";
   final int timer = 1000;
 
-  late WidgetTimer _timerJoueur1;
-  late WidgetTimer _timerJoueur2;
+  final GlobalKey<WidgetTimerState> _timerJoueur1 = GlobalKey<WidgetTimerState>();
+  final GlobalKey<WidgetTimerState> _timerJoueur2 = GlobalKey<WidgetTimerState>();
 
 
   List<int> _highlightedCells = [];
@@ -294,8 +315,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initializeBoard();
-    _timerJoueur1 = WidgetTimer(timer);
-    _timerJoueur2 = WidgetTimer(timer);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _timerJoueur1.currentState?.startTimer();
+    });
   }
 
 void _initializeBoard() {
@@ -333,8 +355,12 @@ void _initializeBoard() {
     setState(() {
       if (_joueur == "Joueur 1") {
         _joueur = "Joueur 2";
+        _timerJoueur1.currentState?.pause();
+        _timerJoueur2.currentState?.startTimer();
       } else {
         _joueur = "Joueur 1";
+        _timerJoueur2.currentState?.pause();
+        _timerJoueur1.currentState?.startTimer();
       }
     });
   }
@@ -375,7 +401,6 @@ void _onPieceSelected(int index) {
         // Vérifie si c'est le tour du joueur actif
         _selectedCell = index;
         _highlightedCells = piece.getPossibleMoves(_board);
-        print('Déplacements possibles pour ${piece.name}: $_highlightedCells');
       } else {
         // Désélectionne si ce n'est pas le tour du joueur
         _selectedCell = null;
@@ -460,7 +485,7 @@ Widget _buildCell(int index, double cellSize) {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 5),
-                        child:_timerJoueur2,
+                        child: WidgetTimer(timer, key: _timerJoueur2),
                       )
                     ],
                   ),
@@ -493,7 +518,7 @@ Widget _buildCell(int index, double cellSize) {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 5),
-                    child:_timerJoueur1,
+                    child: WidgetTimer(timer, key: _timerJoueur1),
                   )
                 ],
               ),

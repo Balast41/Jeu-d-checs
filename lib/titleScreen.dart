@@ -1,10 +1,7 @@
 import 'dart:math' as math;
-import 'package:echec/ParametrePartie.dart';
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
 import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'ParametrePartie.dart';
 
 
