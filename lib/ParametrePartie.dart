@@ -112,6 +112,7 @@ int indexJ2=0;
               onPressed: () {
                 showDialog(
                   context: context,
+                  barrierDismissible: true,
                   builder: (BuildContext context){
                     return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
                     return AlertDialog(
@@ -142,7 +143,9 @@ int indexJ2=0;
                                 onPressed: () {
                                   setState(() {
                                     indexJ1 = (indexJ1 + 1) % choixPionsJ1.length;
+                                    
                                   });
+                                  print(indexJ1);
                                 },
                               ),
                             ],
@@ -174,9 +177,16 @@ int indexJ2=0;
                               ),
                             ],
                           ),
-                         
                         ],
                       ),
+                      actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Ferme la boîte de dialogue
+                        },
+                        child: const Text('Fermer'),
+                      ),
+                    ],
                     );
                   },
                 );
@@ -196,7 +206,7 @@ int indexJ2=0;
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,)),
                   );
               },
               style:ElevatedButton.styleFrom(

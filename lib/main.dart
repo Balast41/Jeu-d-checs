@@ -1,6 +1,27 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
+import 'ParametrePartie.dart';
+
+List<List<String>> pionsJ1=[
+  ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png'],
+  ['assets/ChoixPions/Joueur1/RB.png', 'assets/ChoixPions/Joueur1/RS.png'],
+  ['assets/ChoixPions/Joueur1/DB.png', 'assets/ChoixPions/Joueur1/DA.png'],
+  ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png'],
+  ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png'],
+  ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png']
+  
+];
+List<List<String>> pionsJ2=[
+  ['assets/ChoixPions/Joueur2/PN.png', 'assets/ChoixPions/Joueur2/CP.png'],
+  ['assets/ChoixPions/Joueur2/RN.png', 'assets/ChoixPions/Joueur2/RS.png'],
+  ['assets/ChoixPions/Joueur2/DN.png', 'assets/ChoixPions/Joueur2/DA.png'],
+  ['assets/ChoixPions/Joueur2/FN.png', 'assets/ChoixPions/Joueur2/FE.png'],
+  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png'],
+  ['assets/ChoixPions/Joueur2/CN.png', 'assets/ChoixPions/Joueur2/CC.png']
+  
+];
+
 
 
 
@@ -9,11 +30,14 @@ abstract class Piece {
   final Color color;
   int x;
   int y;
+
   
 
   Piece(this.name, this.color, this.x, this.y);
 
-  Widget buildPiece(double size);
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
+    throw UnimplementedError('buildPiece() must be implemented in subclasses');
+  }
   List<int> getPossibleMoves(List<Piece?> board);
   
 }
@@ -22,10 +46,10 @@ class Roi extends Piece {
   Roi(Color color,int x,int y) : super("Roi", color,x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
-      ? 'assets/images/RB.png'
-      : 'assets/images/RN.png';
+      ? pionsJ1[1][indexJ1]
+      : pionsJ2[1][indexJ2];
     return Image.asset(imagePath, width: size, height: size);
   }
 
@@ -55,10 +79,10 @@ class Reine extends Piece {
   Reine(Color color,int x,int y) : super("Reine", color,x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
-      ? 'assets/images/DB.png'
-      : 'assets/images/DN.png';
+      ? pionsJ1[2][indexJ1]
+      : pionsJ2[2][indexJ2];
     return Image.asset(imagePath, width: size, height: size);
   }
     @override
@@ -96,10 +120,10 @@ class Tour extends Piece {
   Tour(Color color,int x,int y) : super("Tour", color,x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
-      ? 'assets/images/TB.png'
-      : 'assets/images/TN.png';
+      ? pionsJ1[4][indexJ1]
+      : pionsJ2[4][indexJ2];
     return Image.asset(imagePath, width: size, height: size);
   }
     @override
@@ -136,10 +160,10 @@ class Fou extends Piece {
   Fou(Color color,int x,int y) : super("Fou", color,x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
-      ? 'assets/images/FB.png'
-      : 'assets/images/FN.png';
+      ? pionsJ1[3][indexJ1]
+      : pionsJ2[3][indexJ2];
     return Image.asset(imagePath, width: size, height: size);
   }
     @override
@@ -176,10 +200,10 @@ class Cavalier extends Piece {
   Cavalier(Color color,int x,int y) : super("Cavalier", color,x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
-      ? 'assets/images/CB.png'
-      : 'assets/images/CN.png';
+      ? pionsJ1[5][indexJ1]
+      : pionsJ2[5][indexJ2];
     return Image.asset(imagePath, width: size, height: size);
   }
     @override
@@ -208,10 +232,10 @@ class Pion extends Piece {
   Pion(Color color,int x,int y) : super("Pion", color,x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
-      ? 'assets/images/PB.png'
-      : 'assets/images/PN.png';
+      ? pionsJ1[0][indexJ1]
+      : pionsJ2[0][indexJ2];
     return Image.asset(imagePath, width: size, height: size);
   }
     @override
@@ -263,7 +287,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chess.fr',
-      home: const MyHomePage(),
+      home: const MyHomePage(indexJ1: 0,indexJ2: 0),
     );
   }
 }
@@ -271,13 +295,22 @@ class MyApp extends StatelessWidget {
 
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final int indexJ1;
+  final int indexJ2;
+
+  const MyHomePage({super.key, required this.indexJ1, required this.indexJ2});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late List<List> pionsJ1;
+  late List<List> pionsJ2;
+
+
+
+
   final List<Piece?> _board = List.filled(64,null);
   String _joueur = "Joueur 1";
   final int timer = 1000;
@@ -294,6 +327,26 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initializeBoard();
+
+pionsJ1=[
+  ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png'],
+  ['assets/ChoixPions/Joueur1/RB.png', 'assets/ChoixPions/Joueur1/RS.png'],
+  ['assets/ChoixPions/Joueur1/DB.png', 'assets/ChoixPions/Joueur1/DA.png'],
+  ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png'],
+  ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png'],
+  ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png']
+  
+];
+
+pionsJ2=[
+  ['assets/ChoixPions/Joueur1/PN.png', 'assets/ChoixPions/Joueur1/CP.png'],
+  ['assets/ChoixPions/Joueur1/RN.png', 'assets/ChoixPions/Joueur1/RS.png'],
+  ['assets/ChoixPions/Joueur1/DN.png', 'assets/ChoixPions/Joueur1/DA.png'],
+  ['assets/ChoixPions/Joueur1/FN.png', 'assets/ChoixPions/Joueur1/FE.png'],
+  ['assets/ChoixPions/Joueur1/TN.png', 'assets/ChoixPions/Joueur1/TG.png'],
+  ['assets/ChoixPions/Joueur1/CN.png', 'assets/ChoixPions/Joueur1/CC.png']
+  
+];
     _timerJoueur1 = WidgetTimer(timer);
     _timerJoueur2 = WidgetTimer(timer);
   }
@@ -395,7 +448,7 @@ void _onPieceSelected(int index) {
 
 
 
-Widget _buildCell(int index, double cellSize) {
+Widget _buildCell(int index, double cellSize,int indexJ1,int indexJ2) {
   bool isWhite = (index ~/ 8 % 2 == 0 && index % 8 % 2 == 0) || (index ~/ 8 % 2 == 1 && index % 8 % 2 == 1);
   Color baseColor = isWhite ? const Color(0xFFEEEED2) : const Color(0xFF769656);
 
@@ -419,7 +472,7 @@ Widget _buildCell(int index, double cellSize) {
       height: cellSize,
       decoration: decoration,
       child: Center(
-        child: _board[index]?.buildPiece(cellSize * 0.75) ?? Container(),
+        child: _board[index]?.buildPiece(cellSize * 0.75,indexJ1,indexJ2) ?? Container(),
          // Affiche la pièce ou un container vide
       ),
     ),
@@ -470,7 +523,7 @@ Widget _buildCell(int index, double cellSize) {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(8, (i) => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(8, (j) => _buildCell(i * 8 + j, cellSize)),
+                children: List.generate(8, (j) => _buildCell(i * 8 + j, cellSize,widget.indexJ1,widget.indexJ2)),
               )),
             ),
             Container(
