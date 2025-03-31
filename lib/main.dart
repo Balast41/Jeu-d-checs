@@ -2,277 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
 import 'ParametrePartie.dart';
-
-List<List<String>> pionsJ1=[
-  ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png'],
-  ['assets/ChoixPions/Joueur1/RB.png', 'assets/ChoixPions/Joueur1/RS.png'],
-  ['assets/ChoixPions/Joueur1/DB.png', 'assets/ChoixPions/Joueur1/DA.png'],
-  ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png'],
-  ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png'],
-  ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png']
-  
-];
-List<List<String>> pionsJ2=[
-  ['assets/ChoixPions/Joueur2/PN.png', 'assets/ChoixPions/Joueur2/CP.png'],
-  ['assets/ChoixPions/Joueur2/RN.png', 'assets/ChoixPions/Joueur2/RS.png'],
-  ['assets/ChoixPions/Joueur2/DN.png', 'assets/ChoixPions/Joueur2/DA.png'],
-  ['assets/ChoixPions/Joueur2/FN.png', 'assets/ChoixPions/Joueur2/FE.png'],
-  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png'],
-  ['assets/ChoixPions/Joueur2/CN.png', 'assets/ChoixPions/Joueur2/CC.png']
-  
-];
-
-
-
-
-abstract class Piece {
-  final String name;
-  final Color color;
-  int x;
-  int y;
-
-  
-
-  Piece(this.name, this.color, this.x, this.y);
-
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-    throw UnimplementedError('buildPiece() must be implemented in subclasses');
-  }
-  List<int> getPossibleMoves(List<Piece?> board);
-  
-}
-
-class Roi extends Piece {
-  Roi(Color color,int x,int y) : super("Roi", color,x,y);
-
-  @override
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-      String imagePath = color == Colors.white
-      ? pionsJ1[1][indexJ1]
-      : pionsJ2[1][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
-  }
-
-  @override
-  List<int> getPossibleMoves(List<Piece?> board){
-    List<int>moves=[];
-    List<List<int>> directions = [
-      [1, 1],[1, 0],[1, -1],[0, 1],
-      [0, -1],[-1, 1],[-1, 0],[-1, -1],
-    ];
-
-    for(var dir in directions){
-      int newX=x+dir[0];
-      int newY=y+dir[1];
-      if(newX>=0 && newX<8 && newY>=0 && newY<8){
-        int index=newX+newY*8;
-        if(board[index]==null || board[index]!.color!=color){
-          moves.add(index);
-        }
-      }
-    }
-    return moves;
-  }
-}
-
-class Reine extends Piece {
-  Reine(Color color,int x,int y) : super("Reine", color,x,y);
-
-  @override
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-      String imagePath = color == Colors.white
-      ? pionsJ1[2][indexJ1]
-      : pionsJ2[2][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
-  }
-    @override
-  List<int> getPossibleMoves(List<Piece?> board) {
-    List<int> moves = [];
-    List<List<int>> directions = [
-      [1, 0], [-1, 0], [0, 1], [0, -1], // Horizontal et vertical
-      [1, 1], [-1, -1], [1, -1], [-1, 1] // Diagonales
-    ];
-
-    for (var dir in directions) {
-      int newX = x;
-      int newY = y;
-      while (true) {
-        newX += dir[0];
-        newY += dir[1];
-        if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
-
-        int index = newY * 8 + newX;
-        if (board[index] == null) {
-          moves.add(index);
-        } else {
-          if (board[index]?.color != color) {
-            moves.add(index);
-          }
-          break;
-        }
-      }
-    }
-    return moves;
-  }
-}
-
-class Tour extends Piece {
-  Tour(Color color,int x,int y) : super("Tour", color,x,y);
-
-  @override
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-      String imagePath = color == Colors.white
-      ? pionsJ1[4][indexJ1]
-      : pionsJ2[4][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
-  }
-    @override
-  List<int> getPossibleMoves(List<Piece?> board) {
-    List<int> moves = [];
-    List<List<int>> directions = [
-      [1, 0], [-1, 0], [0, 1], [0, -1] // Horizontal et vertical
-    ];
-
-    for (var dir in directions) {
-      int newX = x;
-      int newY = y;
-      while (true) {
-        newX += dir[0];
-        newY += dir[1];
-        if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
-
-        int index = newY * 8 + newX;
-        if (board[index] == null) {
-          moves.add(index);
-        } else {
-          if (board[index]?.color != color) {
-            moves.add(index);
-          }
-          break;
-        }
-      }
-    }
-    return moves;
-  }
-}
-
-class Fou extends Piece {
-  Fou(Color color,int x,int y) : super("Fou", color,x,y);
-
-  @override
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-      String imagePath = color == Colors.white
-      ? pionsJ1[3][indexJ1]
-      : pionsJ2[3][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
-  }
-    @override
-  List<int> getPossibleMoves(List<Piece?> board) {
-    List<int> moves = [];
-    List<List<int>> directions = [
-      [1, 1], [-1, -1], [1, -1], [-1, 1] // Diagonales
-    ];
-
-    for (var dir in directions) {
-      int newX = x;
-      int newY = y;
-      while (true) {
-        newX += dir[0];
-        newY += dir[1];
-        if (newX < 0 || newX >= 8 || newY < 0 || newY >= 8) break;
-
-        int index = newY * 8 + newX;
-        if (board[index] == null) {
-          moves.add(index);
-        } else {
-          if (board[index]?.color != color) {
-            moves.add(index);
-          }
-          break;
-        }
-      }
-    }
-    return moves;
-  }
-}
-
-class Cavalier extends Piece {
-  Cavalier(Color color,int x,int y) : super("Cavalier", color,x,y);
-
-  @override
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-      String imagePath = color == Colors.white
-      ? pionsJ1[5][indexJ1]
-      : pionsJ2[5][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
-  }
-    @override
-  List<int> getPossibleMoves(List<Piece?> board) {
-    List<int> moves = [];
-    List<List<int>> jumps = [
-      [2, 1], [2, -1], [-2, 1], [-2, -1],
-      [1, 2], [1, -2], [-1, 2], [-1, -2]
-    ];
-
-    for (var jump in jumps) {
-      int newX = x + jump[0];
-      int newY = y + jump[1];
-      if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
-        int index = newY * 8 + newX;
-        if (board[index] == null || board[index]?.color != color) {
-          moves.add(index);
-        }
-      }
-    }
-    return moves;
-  }
-}
-
-class Pion extends Piece {
-  Pion(Color color,int x,int y) : super("Pion", color,x,y);
-
-  @override
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-      String imagePath = color == Colors.white
-      ? pionsJ1[0][indexJ1]
-      : pionsJ2[0][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
-  }
-    @override
-  List<int> getPossibleMoves(List<Piece?> board) {
-    List<int> moves = [];
-    int direction = color == Colors.white ? -1 : 1;
-
-    // Avancer d'une case
-    int forwardIndex = (y + direction) * 8 + x;
-    if (board[forwardIndex] == null) {
-      moves.add(forwardIndex);
-
-      // Avancer de deux cases au premier coup
-      if ((color == Colors.white && y == 6) || (color == Colors.black && y == 1)) {
-        int doubleForwardIndex = (y + 2 * direction) * 8 + x;
-        if (board[doubleForwardIndex] == null) {
-          moves.add(doubleForwardIndex);
-        }
-      }
-    }
-
-    // Capturer en diagonale
-    for (int dx in [-1, 1]) {
-      int newX = x + dx;
-      int newY = y + direction;
-      if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
-        int index = newY * 8 + newX;
-        if (board[index] != null && board[index]?.color != color) {
-          moves.add(index);
-        }
-      }
-    }
-
-    return moves;
-  }
-}
-
+import 'Pieces.dart';
+import 'Regles.dart';
 
 
 void main() {
@@ -287,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chess.fr',
-      home: const MyHomePage(indexJ1: 0,indexJ2: 0),
+      home: const MyHomePage(indexJ1: 0,indexJ2: 0,indexPlateau: 0),
     );
   }
 }
@@ -297,8 +28,9 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   final int indexJ1;
   final int indexJ2;
+  final int indexPlateau;
 
-  const MyHomePage({super.key, required this.indexJ1, required this.indexJ2});
+  const MyHomePage({super.key, required this.indexJ1, required this.indexJ2,required this.indexPlateau,});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -307,6 +39,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late List<List> pionsJ1;
   late List<List> pionsJ2;
+  late List<List<Color>> plateaux;
 
 
 
@@ -315,8 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String _joueur = "Joueur 1";
   final int timer = 1000;
 
-  late WidgetTimer _timerJoueur1;
-  late WidgetTimer _timerJoueur2;
+  final GlobalKey<WidgetTimerState> _timerJoueur1 = GlobalKey<WidgetTimerState>();
+  final GlobalKey<WidgetTimerState> _timerJoueur2 = GlobalKey<WidgetTimerState>();
 
 
   List<int> _highlightedCells = [];
@@ -327,6 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _initializeBoard();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _timerJoueur1.currentState?.startTimer();
+    });
 
 pionsJ1=[
   ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png'],
@@ -345,10 +81,15 @@ pionsJ2=[
   ['assets/ChoixPions/Joueur1/FN.png', 'assets/ChoixPions/Joueur1/FE.png'],
   ['assets/ChoixPions/Joueur1/TN.png', 'assets/ChoixPions/Joueur1/TG.png'],
   ['assets/ChoixPions/Joueur1/CN.png', 'assets/ChoixPions/Joueur1/CC.png']
+];
+
+plateaux=[
+  [const Color(0xFFEEEED2),const Color(0xFF769656)],
+  [const Color(0xFFC69C6D),const Color(0xFF603813)],
+
   
 ];
-    _timerJoueur1 = WidgetTimer(timer);
-    _timerJoueur2 = WidgetTimer(timer);
+  
   }
 
 void _initializeBoard() {
@@ -386,33 +127,47 @@ void _initializeBoard() {
     setState(() {
       if (_joueur == "Joueur 1") {
         _joueur = "Joueur 2";
+        _timerJoueur1.currentState?.pause();
+        _timerJoueur2.currentState?.startTimer();
       } else {
         _joueur = "Joueur 1";
+        _timerJoueur2.currentState?.pause();
+        _timerJoueur1.currentState?.startTimer();
       }
     });
   }
 
   void _movePiece(int fromIndex, int toIndex) {
-  setState(() {
-    // Déplace la pièce
-    Piece? piece = _board[fromIndex];
-    if (piece != null) {
-      _board[toIndex] = piece;
-      _board[fromIndex] = null;
+    setState(() {
+      // Déplace la pièce
+      Piece? piece = _board[fromIndex];
+      if (piece != null) {
+        _board[toIndex] = piece;
+        _board[fromIndex] = null;
 
-      // Mettez à jour les coordonnées de la pièce
-      piece.x = toIndex % 8;
-      piece.y = toIndex ~/ 8;
-    }
+        // Mettez à jour les coordonnées de la pièce
+        piece.x = toIndex % 8;
+        piece.y = toIndex ~/ 8;
 
-    // Réinitialise la sélection et les cases mises en surbrillance
-    _selectedCell = null;
-    _highlightedCells = [];
+        piece.aBouge = true; // Marque la pièce comme ayant bougé
 
-    // Change de joueur
-    _changeJoueur();
-  });
-}
+        if (piece is Pion) {
+          if ((piece.color == Colors.white && piece.y == 0) ||
+              (piece.color == Colors.black && piece.y == 7)) {
+            // Promouvoir le pion (par exemple, en reine par défaut)
+            _board[toIndex] = Reine(piece.color, piece.x, piece.y);
+          }
+        }
+      }
+
+      // Réinitialise la sélection et les cases mises en surbrillance
+      _selectedCell = null;
+      _highlightedCells = [];
+
+      // Change de joueur
+      _changeJoueur();
+    });
+  }
 
 bool _isPlayerTurn(Piece piece) {
   return (_joueur == "Joueur 1" && piece.color == Colors.white) ||
@@ -421,26 +176,51 @@ bool _isPlayerTurn(Piece piece) {
 
 void _onPieceSelected(int index) {
   setState(() {
-    if (_selectedCell == null) {
-      // Sélectionne une pièce
+    if (_highlightedCells.contains(index)) {
+      Piece? piece = _board[_selectedCell!];
+
+      // Vérifie si le mouvement est un roque
+      if (piece is Roi) {
+        int diff = index - _selectedCell!;
+        if (diff == 2) {
+          // Petit roque
+          if (Regles.petitRoque(_board, piece.color)) {
+            _changeJoueur();
+            return;
+          }
+        } else if (diff == -2) {
+          // Grand roque
+          if (Regles.grandRoque(_board, piece.color)) {
+            _changeJoueur();
+            return;
+          }
+        }
+      }
+      // Déplace la pièce vers une case mise en surbrillance
+      _movePiece(_selectedCell!, index);
+    } 
+    else {
+      // Désélectionne si on appuie ailleurs
       Piece? piece = _board[index];
       if (piece != null && _isPlayerTurn(piece)) {
         // Vérifie si c'est le tour du joueur actif
         _selectedCell = index;
         _highlightedCells = piece.getPossibleMoves(_board);
-        print('Déplacements possibles pour ${piece.name}: $_highlightedCells');
+
+        // Ajoute les cases de roque si le roi est sélectionné
+        if (piece is Roi) {
+          if (Regles.petitRoquePossible(_board, piece.color)) {
+            _highlightedCells.add(index + 2); // Case pour le petit roque
+          }
+          if (Regles.grandRoquePossible(_board, piece.color)) {
+            _highlightedCells.add(index - 2); // Case pour le grand roque
+          }
+        }
       } else {
         // Désélectionne si ce n'est pas le tour du joueur
         _selectedCell = null;
         _highlightedCells = [];
       }
-    } else if (_highlightedCells.contains(index)) {
-      // Déplace la pièce vers une case mise en surbrillance
-      _movePiece(_selectedCell!, index);
-    } else {
-      // Désélectionne si on appuie ailleurs
-      _selectedCell = null;
-      _highlightedCells = [];
     }
   });
 }
@@ -450,7 +230,7 @@ void _onPieceSelected(int index) {
 
 Widget _buildCell(int index, double cellSize,int indexJ1,int indexJ2) {
   bool isWhite = (index ~/ 8 % 2 == 0 && index % 8 % 2 == 0) || (index ~/ 8 % 2 == 1 && index % 8 % 2 == 1);
-  Color baseColor = isWhite ? const Color(0xFFEEEED2) : const Color(0xFF769656);
+  Color baseColor = isWhite ?  plateaux[widget.indexPlateau][0] : plateaux[widget.indexPlateau][1];
 
   Color cellColor = _selectedCell == index
     ? Colors.blueAccent.withValues(alpha: 0.4)
@@ -513,7 +293,7 @@ Widget _buildCell(int index, double cellSize,int indexJ1,int indexJ2) {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 5),
-                        child:_timerJoueur2,
+                        child:WidgetTimer(timer, key: _timerJoueur2),
                       )
                     ],
                   ),
@@ -546,7 +326,7 @@ Widget _buildCell(int index, double cellSize,int indexJ1,int indexJ2) {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 5),
-                    child:_timerJoueur1,
+                    child: WidgetTimer(timer, key: _timerJoueur1),
                   )
                 ],
               ),

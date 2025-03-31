@@ -51,25 +51,15 @@ final List<String> choixPionsJ2=[
   'assets/ChoixPions/Joueur2/CP.png',
 ];
 
+final List<String> choixPlateaux=[
+  'assets/Plateau/plateau 1.png',
+  'assets/Plateau/plateau2.png',
+];
+
 int indexJ1=0;
 int indexJ2=0;
-
-  void changerSkinJ1(int direction){
-    setState(() {
-      indexJ1=(indexJ1+direction)%choixPionsJ1.length;
-      if((indexJ1<0)){
-        indexJ1=choixPionsJ1.length-1;
-      }
-    });
-  }
-    void changerSkinJ2(int direction){
-    setState(() {
-      indexJ2=(indexJ2+direction)%choixPionsJ2.length;
-      if((indexJ2<0)){
-        indexJ2=choixPionsJ2.length-1;
-      }
-    });
-  }
+int indexPlateau=0;
+int timerValue = 1000;
 
 
   @override
@@ -84,7 +74,85 @@ int indexJ2=0;
           children: [
             ElevatedButton(
               onPressed: () {
-                print("bouton1");
+                showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        TextEditingController minutesController = TextEditingController(
+          text: (timerValue ~/ 60).toString().padLeft(2, '0'),
+        );
+        TextEditingController secondsController = TextEditingController(
+          text: (timerValue % 60).toString().padLeft(2, '0'),
+        );
+        return AlertDialog(
+          title: const Center(child: Text('Modifier le Timer')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Champ pour les minutes
+                  SizedBox(
+                    width: 50,
+                    child: TextField(
+                      controller: minutesController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'MM',
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      ':',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  // Champ pour les secondes
+                  SizedBox(
+                    width: 50,
+                    child: TextField(
+                      controller: secondsController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: '00',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Ferme la boîte de dialogue sans sauvegarder
+              },
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  // Met à jour la valeur du timer
+                  final minutes = int.tryParse(minutesController.text) ?? 0;
+                  final seconds = int.tryParse(secondsController.text) ?? 0;
+                  timerValue = (minutes * 60) + seconds;
+                });
+                Navigator.pop(context); // Ferme la boîte de dialogue
+              },
+              child: const Text('Valider'),
+            ),
+          ],
+        );
+      },
+    );
               },
               style:ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -97,7 +165,59 @@ int indexJ2=0;
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                print("bouton2");
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context){
+                    return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
+                    return AlertDialog(
+                      title: const Center(child:Text('Plateaux'),),
+                      
+                      content:Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon:const Icon(Icons.arrow_left),
+                                onPressed: () {
+                                  setState(() {
+                                    indexPlateau = (indexJ1 - 1) % choixPlateaux.length;
+                                    if (indexPlateau < 0) indexJ1 = choixPlateaux.length - 1;
+                                  });
+                                },
+                              ),
+                              Image.asset(choixPlateaux[indexPlateau],width: 100,height: 100,errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.error, size: 50); // Affiche une icône d'erreur
+                                  },),
+                              IconButton(
+                                icon:const Icon(Icons.arrow_right),
+                                onPressed: () {
+                                  setState(() {
+                                    indexPlateau = (indexPlateau + 1) % choixPlateaux.length;
+                                    
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Ferme la boîte de dialogue
+                        },
+                        child: const Text('Fermer'),
+                      ),
+                    ],
+                    );
+                  },
+                );
+              },
+            );
               },
                 style:ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
@@ -206,7 +326,7 @@ int indexJ2=0;
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,)),
+                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,)),
                   );
               },
               style:ElevatedButton.styleFrom(

@@ -7,11 +7,11 @@ class WidgetTimer extends StatefulWidget{
   const WidgetTimer(this.tempsInitial, {super.key});
 
   @override
-  _WidgetTimerState createState() => _WidgetTimerState();
+  WidgetTimerState createState() => WidgetTimerState();
 }
 
-class _WidgetTimerState extends State<WidgetTimer> {
-  late Timer _timer;
+class WidgetTimerState extends State<WidgetTimer> {
+  Timer? _timer;
   late int _start;
 
   @override
@@ -21,22 +21,24 @@ class _WidgetTimerState extends State<WidgetTimer> {
   }
 
   void startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_start > 0) {
         setState(() {
           _start--;
         });
       } else {
-        _timer.cancel();
+        _timer?.cancel();
       }
     });
   }
 
   void pause() {
-    _timer.cancel();
+    _timer?.cancel();
   }
 
   void resetTimer() {
+    _timer?.cancel();
     setState(() {
       _start = widget.tempsInitial;
     });
@@ -44,7 +46,7 @@ class _WidgetTimerState extends State<WidgetTimer> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 

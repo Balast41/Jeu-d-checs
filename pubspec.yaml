@@ -75,6 +75,8 @@ flutter:
     - assets/Minecraft/TG.png
     - assets/ChoixPions/Joueur1/
     - assets/ChoixPions/Joueur2/
+    - assets/Plateau/plateau 1.png
+    - assets/Plateau/plateau2.png
 
 
   # The following line ensures that the Material Icons font is
