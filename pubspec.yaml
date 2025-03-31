@@ -77,6 +77,10 @@ flutter:
     - assets/ChoixPions/Joueur2/
     - assets/Plateau/plateau 1.png
     - assets/Plateau/plateau2.png
+    - assets/Plateau/plateau3.png
+    - assets/Plateau/plateau4.png
+    - assets/Plateau/plateau5.png
+    - assets/Plateau/plateau6.png
 
 
   # The following line ensures that the Material Icons font is

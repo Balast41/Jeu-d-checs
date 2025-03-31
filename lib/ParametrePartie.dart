@@ -44,16 +44,25 @@ class _ParametrePartieState extends State<Parametrepartie> {
 final List<String> choixPionsJ1=[
   'assets/ChoixPions/Joueur1/PB.png',
   'assets/ChoixPions/Joueur1/CP.png',
+  'assets/ChoixPions/Joueur1/PO.png',
+  'assets/ChoixPions/Joueur1/PA.png',
+
 ];
 
 final List<String> choixPionsJ2=[
   'assets/ChoixPions/Joueur2/PN.png',
   'assets/ChoixPions/Joueur2/CP.png',
+  'assets/ChoixPions/Joueur2/PO.png',
+  'assets/ChoixPions/Joueur2/PA.png',
 ];
 
 final List<String> choixPlateaux=[
   'assets/Plateau/plateau 1.png',
   'assets/Plateau/plateau2.png',
+  'assets/Plateau/plateau3.png',
+  'assets/Plateau/plateau4.png',
+  'assets/Plateau/plateau5.png',
+  'assets/Plateau/plateau6.png',
 ];
 
 int indexJ1=0;
@@ -184,8 +193,7 @@ int timerValue = 1000;
                                 icon:const Icon(Icons.arrow_left),
                                 onPressed: () {
                                   setState(() {
-                                    indexPlateau = (indexJ1 - 1) % choixPlateaux.length;
-                                    if (indexPlateau < 0) indexJ1 = choixPlateaux.length - 1;
+                                      indexPlateau = (indexPlateau - 1 + choixPlateaux.length) % choixPlateaux.length;
                                   });
                                 },
                               ),
@@ -250,8 +258,9 @@ int timerValue = 1000;
                                 icon:const Icon(Icons.arrow_left),
                                 onPressed: () {
                                   setState(() {
-                                    indexJ1 = (indexJ1 - 1) % choixPionsJ1.length;
-                                    if (indexJ1 < 0) indexJ1 = choixPionsJ1.length - 1;
+                                    do {
+                                        indexJ1 = (indexJ1 - 1 + choixPionsJ1.length) % choixPionsJ1.length;
+                                      } while (indexJ1 != 0 && indexJ1 == indexJ2);
                                   });
                                 },
                               ),
@@ -262,7 +271,9 @@ int timerValue = 1000;
                                 icon:const Icon(Icons.arrow_right),
                                 onPressed: () {
                                   setState(() {
-                                    indexJ1 = (indexJ1 + 1) % choixPionsJ1.length;
+                                    do {
+                                      indexJ1 = (indexJ1 + 1) % choixPionsJ1.length;
+                                    } while (indexJ1 != 0 && indexJ1 == indexJ2);
                                     
                                   });
                                   print(indexJ1);
@@ -279,8 +290,9 @@ int timerValue = 1000;
                                 icon:const Icon(Icons.arrow_left),
                                 onPressed: () {
                                   setState(() {
-                                    indexJ2 = (indexJ2 - 1) % choixPionsJ2.length;
-                                    if (indexJ2 < 0) indexJ2 = choixPionsJ2.length - 1;
+                                    do {
+                                        indexJ2 = (indexJ2 - 1 + choixPionsJ2.length) % choixPionsJ2.length;
+                                      } while (indexJ2 != 0 && indexJ2 == indexJ1);
                                   });
                                 },
                               ),
@@ -291,7 +303,9 @@ int timerValue = 1000;
                                 icon:const Icon(Icons.arrow_right),
                                 onPressed: () {
                                   setState(() {
-                                    indexJ2 = (indexJ2 + 1) % choixPionsJ2.length;
+                                    do {
+                                        indexJ2 = (indexJ2 + 1) % choixPionsJ2.length;
+                                      } while (indexJ2 != 0 && indexJ2 == indexJ1);
                                   });
                                 },
                               ),
@@ -326,7 +340,7 @@ int timerValue = 1000;
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,)),
+                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,timerValue: timerValue,)),
                   );
               },
               style:ElevatedButton.styleFrom(
