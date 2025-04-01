@@ -81,6 +81,9 @@ flutter:
     - assets/Plateau/plateau4.png
     - assets/Plateau/plateau5.png
     - assets/Plateau/plateau6.png
+    - assets/Icon.png
+    - assets/Settings.png
+    - assets/Plateau.png
 
 
   # The following line ensures that the Material Icons font is
