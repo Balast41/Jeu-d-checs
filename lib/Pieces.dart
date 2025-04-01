@@ -37,13 +37,14 @@ List<List<Color>> plateaux=[
 abstract class Piece {
   final String name;
   final Color color;
+  final int player;
   int x;
   int y;
   bool aBouge = false; // Indique si la pièce a déjà bougé
 
   
 
-  Piece(this.name, this.color, this.x, this.y, {this.aBouge = false});
+  Piece(this.name, this.color, this.player, this.x, this.y, {this.aBouge = false});
 
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
     throw UnimplementedError('buildPiece() must be implemented in subclasses');
@@ -53,14 +54,17 @@ abstract class Piece {
 }
 
 class Roi extends Piece {
-  Roi(Color color,int x,int y) : super("Roi", color,x,y);
+  Roi(Color color, int player, int x,int y) : super("Roi", color, player, x,y);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[1][indexJ1]
       : pionsJ2[1][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
+    return Transform.rotate(
+      angle: player == 2 ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size)
+    );
   }
 
   @override
@@ -86,14 +90,17 @@ class Roi extends Piece {
 }
 
 class Reine extends Piece {
-  Reine(Color color,int x,int y) : super("Reine", color,x,y);
+  Reine(Color color, int player, int x,int y) : super("Reine", color, player, x,y);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[2][indexJ1]
       : pionsJ2[2][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
+    return Transform.rotate(
+      angle: player == 2 ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size)
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -127,14 +134,17 @@ class Reine extends Piece {
 }
 
 class Tour extends Piece {
-  Tour(Color color,int x,int y) : super("Tour", color,x,y);
+  Tour(Color color, int player, int x,int y) : super("Tour", color, player, x,y);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[4][indexJ1]
       : pionsJ2[4][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
+    return Transform.rotate(
+      angle: player == 2 ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size)
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -167,14 +177,17 @@ class Tour extends Piece {
 }
 
 class Fou extends Piece {
-  Fou(Color color,int x,int y) : super("Fou", color,x,y);
+  Fou(Color color, int player, int x,int y) : super("Fou", color, player, x,y);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[3][indexJ1]
       : pionsJ2[3][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
+    return Transform.rotate(
+      angle: player == 2 ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size)
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -207,14 +220,17 @@ class Fou extends Piece {
 }
 
 class Cavalier extends Piece {
-  Cavalier(Color color,int x,int y) : super("Cavalier", color,x,y);
+  Cavalier(Color color, int player, int x,int y) : super("Cavalier", color, player, x,y);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[5][indexJ1]
       : pionsJ2[5][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
+    return Transform.rotate(
+      angle: player == 2 ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size)
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
@@ -239,14 +255,17 @@ class Cavalier extends Piece {
 }
 
 class Pion extends Piece {
-  Pion(Color color,int x,int y) : super("Pion", color,x,y);
+  Pion(Color color, int player, int x,int y) : super("Pion", color, player, x,y);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[0][indexJ1]
       : pionsJ2[0][indexJ2];
-    return Image.asset(imagePath, width: size, height: size);
+    return Transform.rotate(
+      angle: player == 2 ? math.pi : 0,
+      child: Image.asset(imagePath, width: size, height: size)
+    );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {

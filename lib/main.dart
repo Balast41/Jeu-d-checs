@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'widget_timer.dart';
 import 'ParametrePartie.dart';
 import 'Pieces.dart';
@@ -42,7 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<List> pionsJ2;
   late List<List<Color>> plateaux;
 
+  late AudioPlayer _audioPlayer;
 
+  void _playBackgroundMusic() async {
+  await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
+  await _audioPlayer.play(AssetSource('musique/J.mp3'));} // Joue la musique
 
 
   final List<Piece?> _board = List.filled(64,null);
@@ -63,6 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _timerJoueur1.currentState?.startTimer();
     });
+    _audioPlayer = AudioPlayer();
+    _playBackgroundMusic();
 
 pionsJ1=[
   ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png','assets/ChoixPions/Joueur1/PO.png','assets/ChoixPions/Joueur1/PA.png'],
@@ -99,33 +106,33 @@ plateaux=[
 
 void _initializeBoard() {
   // Initialisation des pièces sur le plateau
-  _board[0] = Tour(Colors.black, 0, 0);
-  _board[1] = Cavalier(Colors.black, 1, 0);
-  _board[2] = Fou(Colors.black, 2, 0);
-  _board[3] = Reine(Colors.black, 3, 0);
-  _board[4] = Roi(Colors.black, 4, 0);
-  _board[5] = Fou(Colors.black, 5, 0);
-  _board[6] = Cavalier(Colors.black, 6, 0);
-  _board[7] = Tour(Colors.black, 7, 0);
+  _board[0] = Tour(Colors.black, 2, 0, 0);
+  _board[1] = Cavalier(Colors.black, 2, 1, 0);
+  _board[2] = Fou(Colors.black, 2, 2, 0);
+  _board[3] = Reine(Colors.black, 2, 3, 0);
+  _board[4] = Roi(Colors.black, 2, 4, 0);
+  _board[5] = Fou(Colors.black, 2, 5, 0);
+  _board[6] = Cavalier(Colors.black, 2, 6, 0);
+  _board[7] = Tour(Colors.black, 2, 7, 0);
 
   // Placement des pions noirs
   for (int i = 8; i < 16; i++) {
-    _board[i] = Pion(Colors.black, i % 8, 1);
+    _board[i] = Pion(Colors.black, 2, i % 8, 1);
   }
 
   // Placement des pions blancs
   for (int i = 48; i < 56; i++) {
-    _board[i] = Pion(Colors.white, i % 8, 6);
+    _board[i] = Pion(Colors.white, 1, i % 8, 6);
   }
 
-  _board[56] = Tour(Colors.white, 0, 7);
-  _board[57] = Cavalier(Colors.white, 1, 7);
-  _board[58] = Fou(Colors.white, 2, 7);
-  _board[59] = Reine(Colors.white, 3, 7);
-  _board[60] = Roi(Colors.white, 4, 7);
-  _board[61] = Fou(Colors.white, 5, 7);
-  _board[62] = Cavalier(Colors.white, 6, 7);
-  _board[63] = Tour(Colors.white, 7, 7);
+  _board[56] = Tour(Colors.white, 1, 0, 7);
+  _board[57] = Cavalier(Colors.white, 1, 1, 7);
+  _board[58] = Fou(Colors.white, 1, 2, 7);
+  _board[59] = Reine(Colors.white, 1, 3, 7);
+  _board[60] = Roi(Colors.white, 1, 4, 7);
+  _board[61] = Fou(Colors.white, 1, 5, 7);
+  _board[62] = Cavalier(Colors.white, 1, 6, 7);
+  _board[63] = Tour(Colors.white, 1, 7, 7);
 }
 
   void _changeJoueur() {
@@ -160,7 +167,7 @@ void _initializeBoard() {
           if ((piece.color == Colors.white && piece.y == 0) ||
               (piece.color == Colors.black && piece.y == 7)) {
             // Promouvoir le pion (par exemple, en reine par défaut)
-            _board[toIndex] = Reine(piece.color, piece.x, piece.y);
+            _board[toIndex] = Reine(piece.color, piece.player, piece.x, piece.y);
           }
         }
       }

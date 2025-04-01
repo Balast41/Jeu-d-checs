@@ -24,16 +24,16 @@ class Regles {
         // Promotion
         switch (typePiece) {
           case "Reine":
-            board[index] = Reine(pion.color, pion.x, pion.y);
+            board[index] = Reine(pion.color, pion.player, pion.x, pion.y);
             break;
           case "Tour":
-            board[index] = Tour(pion.color, pion.x, pion.y);
+            board[index] = Tour(pion.color, pion.player, pion.x, pion.y);
             break;
           case "Fou":
-            board[index] = Fou(pion.color, pion.x, pion.y);
+            board[index] = Fou(pion.color, pion.player, pion.x, pion.y);
             break;
           case "Cavalier":
-            board[index] = Cavalier(pion.color, pion.x, pion.y);
+            board[index] = Cavalier(pion.color, pion.player, pion.x, pion.y);
             break;
         }
       }
@@ -61,8 +61,8 @@ class Regles {
       // Effectue le petit roque
       board[roiIndex] = null;
       board[tourIndex] = null;
-      board[roiIndex + 2 * direction] = Roi(joueurActuel, roi.x + 2, roi.y);
-      board[roiIndex + 1 * direction] = Tour(joueurActuel, tour.x - 2, tour.y);
+      board[roiIndex + 2 * direction] = Roi(joueurActuel, roi.player, roi.x + 2, roi.y);
+      board[roiIndex + 1 * direction] = Tour(joueurActuel, tour.player, tour.x - 2, tour.y);
       return true;
     }
     return false;
@@ -89,8 +89,8 @@ class Regles {
       // Effectue le grand roque
       board[roiIndex] = null;
       board[tourIndex] = null;
-      board[roiIndex + 2 * direction] = Roi(joueurActuel, roi.x + 2, roi.y);
-      board[roiIndex + 1 * direction] = Tour(joueurActuel, tour.x - 3, tour.y);
+      board[roiIndex + 2 * direction] = Roi(joueurActuel, roi.player, roi.x + 2, roi.y);
+      board[roiIndex + 1 * direction] = Tour(joueurActuel, tour.player, tour.x - 3, tour.y);
       return true;
     }
     return false;
