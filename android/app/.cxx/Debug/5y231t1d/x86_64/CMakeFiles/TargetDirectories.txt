@@ -1,0 +1,2 @@
+C:/Users/Rider/Documents/cours/Cours_insa/3A/S6_dev_mobile/Projet_jeu_echec/Jeu-d-checs/android/app/.cxx/Debug/5y231t1d/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Rider/Documents/cours/Cours_insa/3A/S6_dev_mobile/Projet_jeu_echec/Jeu-d-checs/android/app/.cxx/Debug/5y231t1d/x86_64/CMakeFiles/rebuild_cache.dir

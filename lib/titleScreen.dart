@@ -35,6 +35,9 @@ class _TitleScreenState extends State<EcranTitre> {
 
 @override
 Widget build(BuildContext context) {
+double _currentVolume=0;
+bool isOn = true;
+
   return Scaffold(
     body: Stack(
       children: [
@@ -89,6 +92,7 @@ Widget build(BuildContext context) {
             ),
             // Espace flexible pour pousser le bouton "Paramètres" vers le bas
             const Spacer(flex: 3),
+            
             // Bouton "Paramètres" en bas à gauche
             Row(
               mainAxisAlignment: MainAxisAlignment.start, // Aligne le bouton à gauche
@@ -103,25 +107,59 @@ Widget build(BuildContext context) {
                   builder: (BuildContext context){
                     return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
                     return AlertDialog(
-                      title: const Center(child:Text('Parametres'),),
-                      
+                      title: const Center(child:Text('Parametres',style : TextStyle(color:Colors.white)),),
+                      backgroundColor: const Color.fromARGB(255, 158, 158, 158),
                       content:Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(height: 10),
+                          Text("Musique",style: TextStyle(fontSize: 20, color: Colors.white) ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            
+                            mainAxisAlignment: MainAxisAlignment.center, // Centre les éléments
                             children: [
+                              Icon(Icons.volume_off, size: 30, color: Colors.white),
+                              Expanded(child:Slider(
+                                  value: _currentVolume,
+                                  onChanged: (value) {
+                                  //FlutterVolumeController.setVolume(value);
+                                  setState(() {
+                                   _currentVolume = value;                      
+                                   });                                   
+                                  },
+
+                                  activeColor: const Color.fromARGB(255, 32, 111, 34)
+                              ),),
+                              Icon(Icons.volume_up, size: 30, color:Colors.white),
+
                             ],
                           ),
+                           Row(
+                            
+                            mainAxisAlignment: MainAxisAlignment.center, // Centre les éléments
+                            children: [
+                              Text("Mode assisté",style: TextStyle(fontSize: 20, color:Colors.white) ),
+                              Switch(
+                                value: isOn, // État du switch                              
+                                onChanged: (value) {
+                                  setState(() {
+                                    isOn = value;
+                                    });
+                                  },
+                                  activeColor: const Color.fromARGB(255, 32, 111, 34),
+                                )
+                              ]
+                            )
+
                         ],
+
                       ),
                       actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context); // Ferme la boîte de dialogue
                         },
-                        child: const Text('Fermer'),
+                        child: const Text('Fermer',style: TextStyle(fontSize: 20, color:Colors.white) ),
                       ),
                     ],
                     );
