@@ -1,6 +1,37 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
+List<List<String>> pionsJ1=[
+  ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png','assets/ChoixPions/Joueur1/PO.png','assets/ChoixPions/Joueur1/PA.png'],
+  ['assets/ChoixPions/Joueur1/RB.png', 'assets/ChoixPions/Joueur1/RS.png','assets/ChoixPions/Joueur1/RO.png','assets/ChoixPions/Joueur1/RA.png'],
+  ['assets/ChoixPions/Joueur1/DB.png', 'assets/ChoixPions/Joueur1/DA.png','assets/ChoixPions/Joueur1/DO.png','assets/ChoixPions/Joueur1/DAr.png'],
+  ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png','assets/ChoixPions/Joueur1/FO.png','assets/ChoixPions/Joueur1/FA.png'],
+  ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png','assets/ChoixPions/Joueur1/TO.png','assets/ChoixPions/Joueur1/TA.png'],
+  ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png','assets/ChoixPions/Joueur1/CO.png','assets/ChoixPions/Joueur1/CA.png']
+  
+];
+List<List<String>> pionsJ2=[
+  ['assets/ChoixPions/Joueur2/PN.png', 'assets/ChoixPions/Joueur2/CP.png','assets/ChoixPions/Joueur2/PO.png','assets/ChoixPions/Joueur2/PA.png'],
+  ['assets/ChoixPions/Joueur2/RN.png', 'assets/ChoixPions/Joueur2/RS.png','assets/ChoixPions/Joueur2/RO.png','assets/ChoixPions/Joueur2/RA.png'],
+  ['assets/ChoixPions/Joueur2/DN.png', 'assets/ChoixPions/Joueur2/DA.png','assets/ChoixPions/Joueur2/DO.png','assets/ChoixPions/Joueur2/DAr.png'],
+  ['assets/ChoixPions/Joueur2/FN.png', 'assets/ChoixPions/Joueur2/FE.png','assets/ChoixPions/Joueur2/FO.png','assets/ChoixPions/Joueur2/FA.png'],
+  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png','assets/ChoixPions/Joueur2/TO.png','assets/ChoixPions/Joueur2/TA.png'],
+  ['assets/ChoixPions/Joueur2/CN.png', 'assets/ChoixPions/Joueur2/CC.png','assets/ChoixPions/Joueur2/CO.png','assets/ChoixPions/Joueur2/CA.png']
+  
+];
+
+List<List<Color>> plateaux=[
+  [const Color(0xFFEEEED2),const Color(0xFF769656)],
+  [const Color(0xFFC69C6D),const Color(0xFF603813)],
+  [const Color(0xFFE7DBEE),const Color(0xFF987DB6)],
+  [const Color(0xFFDADFE8),const Color(0xFF6D9FC9)],
+  [const Color(0xFFEDF0BF),const Color(0xFFED7476)],
+  [const Color(0xFFF1D9B4),const Color(0xFFB68664)]
+
+  
+];
+
+
 abstract class Piece {
   final String name;
   final Color color;
@@ -13,7 +44,9 @@ abstract class Piece {
 
   Piece(this.name, this.color, this.player, this.x, this.y, {this.aBouge = false});
 
-  Widget buildPiece(double size);
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
+    throw UnimplementedError('buildPiece() must be implemented in subclasses');
+  }
   List<int> getPossibleMoves(List<Piece?> board);
   
 }
@@ -22,13 +55,13 @@ class Roi extends Piece {
   Roi(Color color, int player, int x,int y) : super("Roi", color, player, x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[1][indexJ1]
       : pionsJ2[1][indexJ2];
     return Transform.rotate(
-      angle: player == 2 ? math.pi : 0, // Rotation de 180° pour les pièces du joueur 2
-      child: Image.asset(imagePath, width: size, height: size),
+      angle: math.pi,
+      child: Image.asset(imagePath, width: size, height: size)
     );
   }
 
@@ -58,13 +91,13 @@ class Reine extends Piece {
   Reine(Color color, int player, int x,int y) : super("Reine", color, player, x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[2][indexJ1]
       : pionsJ2[2][indexJ2];
     return Transform.rotate(
-      angle: player == 2 ? math.pi : 0, // Rotation de 180° pour les pièces du joueur 2
-      child: Image.asset(imagePath, width: size, height: size),
+      angle: math.pi,
+      child: Image.asset(imagePath, width: size, height: size)
     );
   }
     @override
@@ -99,16 +132,16 @@ class Reine extends Piece {
 }
 
 class Tour extends Piece {
-  Tour(Color color, int player, int x,int y) : super("Tour", color, player, x,y);
+  Tour(Color color, int player, int x,int y) : super("Tour", color, player,x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[4][indexJ1]
       : pionsJ2[4][indexJ2];
     return Transform.rotate(
-      angle: player == 2 ? math.pi : 0, // Rotation de 180° pour les pièces du joueur 2
-      child: Image.asset(imagePath, width: size, height: size),
+      angle: math.pi,
+      child: Image.asset(imagePath, width: size, height: size)
     );
   }
     @override
@@ -145,13 +178,13 @@ class Fou extends Piece {
   Fou(Color color, int player, int x,int y) : super("Fou", color, player, x,y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[3][indexJ1]
       : pionsJ2[3][indexJ2];
     return Transform.rotate(
-      angle: player == 2 ? math.pi : 0, // Rotation de 180° pour les pièces du joueur 2
-      child: Image.asset(imagePath, width: size, height: size),
+      angle: math.pi,
+      child: Image.asset(imagePath, width: size, height: size)
     );
   }
     @override
@@ -185,16 +218,16 @@ class Fou extends Piece {
 }
 
 class Cavalier extends Piece {
-  Cavalier(Color color, int player, int x,int y) : super("Cavalier", color, player, x,y);
+  Cavalier(Color color, int player, int x,int y) : super("Cavalier", color, player, x, y);
 
   @override
-  Widget buildPiece(double size) {
+  Widget buildPiece(double size,int indexJ1,int indexJ2) {
       String imagePath = color == Colors.white
       ? pionsJ1[5][indexJ1]
       : pionsJ2[5][indexJ2];
     return Transform.rotate(
-      angle: player == 2 ? math.pi : 0, // Rotation de 180° pour les pièces du joueur 2
-      child: Image.asset(imagePath, width: size, height: size),
+      angle: math.pi,
+      child: Image.asset(imagePath, width: size, height: size)
     );
   }
     @override
@@ -228,41 +261,33 @@ class Pion extends Piece {
       ? pionsJ1[0][indexJ1]
       : pionsJ2[0][indexJ2];
     return Transform.rotate(
-      angle: player == 2 ? math.pi : 0, // Rotation de 180° pour les pièces du joueur 2
-      child: Image.asset(imagePath, width: size, height: size),
+      angle: math.pi,
+      child: Image.asset(imagePath, width: size, height: size)
     );
   }
     @override
   List<int> getPossibleMoves(List<Piece?> board) {
     List<int> moves = [];
-    int direction = color == Colors.white ? -1 : 1; // Direction de mouvement
-    int startRow = color == Colors.white ? 6 : 1; // Ligne de départ pour le double pas
+    int direction = color == Colors.white ? -1 : 1;
 
-    // Mouvement simple
-    int newX = x;
-    int newY = y + direction;
-    if (newY >= 0 && newY < 8) {
-      int index = newY * 8 + newX;
-      if (board[index] == null) {
-        moves.add(index);
-      }
-    }
+    // Avancer d'une case
+    int forwardIndex = (y + direction) * 8 + x;
+    if (board[forwardIndex] == null) {
+      moves.add(forwardIndex);
 
-    // Double pas
-    if (y == startRow) {
-      newY += direction;
-      if (newY >= 0 && newY < 8) {
-        int index = newY * 8 + newX;
-        if (board[index] == null) {
-          moves.add(index);
+      // Avancer de deux cases au premier coup
+      if ((color == Colors.white && y == 6) || (color == Colors.black && y == 1)) {
+        int doubleForwardIndex = (y + 2 * direction) * 8 + x;
+        if (board[doubleForwardIndex] == null) {
+          moves.add(doubleForwardIndex);
         }
       }
     }
 
-    // Prise en diagonale
-    for (int dx = -1; dx <= 1; dx += 2) {
-      newX = x + dx;
-      newY = y + direction;
+    // Capturer en diagonale
+    for (int dx in [-1, 1]) {
+      int newX = x + dx;
+      int newY = y + direction;
       if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
         int index = newY * 8 + newX;
         if (board[index] != null && board[index]?.color != color) {

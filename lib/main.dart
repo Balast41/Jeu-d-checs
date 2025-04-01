@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
+import 'ParametrePartie.dart';
 import 'Pieces.dart';
 import 'Regles.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chess.fr',
-      home: const MyHomePage(),
+      home: const MyHomePage(indexJ1: 0,indexJ2: 0,indexPlateau: 0,timerValue: 1000,),
     );
   }
 }
@@ -25,16 +26,27 @@ class MyApp extends StatelessWidget {
 
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final int indexJ1;
+  final int indexJ2;
+  final int indexPlateau;
+  final int timerValue;
+
+  const MyHomePage({super.key, required this.indexJ1, required this.indexJ2,required this.indexPlateau,required this.timerValue,});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late List<List> pionsJ1;
+  late List<List> pionsJ2;
+  late List<List<Color>> plateaux;
+
+
+
+
   final List<Piece?> _board = List.filled(64,null);
   String _joueur = "Joueur 1";
-  final int timer = 1000;
 
   final GlobalKey<WidgetTimerState> _timerJoueur1 = GlobalKey<WidgetTimerState>();
   final GlobalKey<WidgetTimerState> _timerJoueur2 = GlobalKey<WidgetTimerState>();
@@ -51,6 +63,38 @@ class _MyHomePageState extends State<MyHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _timerJoueur1.currentState?.startTimer();
     });
+
+pionsJ1=[
+  ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png','assets/ChoixPions/Joueur1/PO.png','assets/ChoixPions/Joueur1/PA.png'],
+  ['assets/ChoixPions/Joueur1/RB.png', 'assets/ChoixPions/Joueur1/RS.png','assets/ChoixPions/Joueur1/RO.png','assets/ChoixPions/Joueur1/RA.png'],
+  ['assets/ChoixPions/Joueur1/DB.png', 'assets/ChoixPions/Joueur1/DA.png','assets/ChoixPions/Joueur1/DO.png','assets/ChoixPions/Joueur1/DAr.png'],
+  ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png','assets/ChoixPions/Joueur1/FO.png','assets/ChoixPions/Joueur1/FA.png'],
+  ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png','assets/ChoixPions/Joueur1/TO.png','assets/ChoixPions/Joueur1/TA.png'],
+  ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png','assets/ChoixPions/Joueur1/CO.png','assets/ChoixPions/Joueur1/CA.png']
+  
+];
+
+pionsJ2=[
+  ['assets/ChoixPions/Joueur2/PN.png', 'assets/ChoixPions/Joueur2/CP.png','assets/ChoixPions/Joueur2/PO.png','assets/ChoixPions/Joueur2/PA.png'],
+  ['assets/ChoixPions/Joueur2/RN.png', 'assets/ChoixPions/Joueur2/RS.png','assets/ChoixPions/Joueur2/RO.png','assets/ChoixPions/Joueur2/RA.png'],
+  ['assets/ChoixPions/Joueur2/DN.png', 'assets/ChoixPions/Joueur2/DA.png','assets/ChoixPions/Joueur2/DO.png','assets/ChoixPions/Joueur2/DAr.png'],
+  ['assets/ChoixPions/Joueur2/FN.png', 'assets/ChoixPions/Joueur2/FE.png','assets/ChoixPions/Joueur2/FO.png','assets/ChoixPions/Joueur2/FA.png'],
+  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png','assets/ChoixPions/Joueur2/TO.png','assets/ChoixPions/Joueur2/TA.png'],
+  ['assets/ChoixPions/Joueur2/CN.png', 'assets/ChoixPions/Joueur2/CC.png','assets/ChoixPions/Joueur2/CO.png','assets/ChoixPions/Joueur2/CA.png']
+];
+
+plateaux=[
+  [const Color(0xFFEEEED2),const Color(0xFF769656)],
+  [const Color(0xFFC69C6D),const Color(0xFF603813)],
+  [const Color(0xFFE7DBEE),const Color(0xFF987DB6)],
+  [const Color(0xFFDADFE8),const Color(0xFF6D9FC9)],
+  [const Color(0xFFEDF0BF),const Color(0xFFED7476)],
+  [const Color(0xFFF1D9B4),const Color(0xFFB68664)]
+
+
+  
+];
+  
   }
 
 void _initializeBoard() {
@@ -116,7 +160,7 @@ void _initializeBoard() {
           if ((piece.color == Colors.white && piece.y == 0) ||
               (piece.color == Colors.black && piece.y == 7)) {
             // Promouvoir le pion (par exemple, en reine par défaut)
-            _board[toIndex] = Reine(piece.color,piece.player, piece.x, piece.y);
+            _board[toIndex] = Reine(piece.color, piece.player, piece.x, piece.y);
           }
         }
       }
@@ -130,10 +174,10 @@ void _initializeBoard() {
     });
   }
 
-  bool _isPlayerTurn(Piece piece) {
-    return (_joueur == "Joueur 1" && piece.color == Colors.white) ||
-          (_joueur == "Joueur 2" && piece.color == Colors.black);
-  }
+bool _isPlayerTurn(Piece piece) {
+  return (_joueur == "Joueur 1" && piece.color == Colors.white) ||
+         (_joueur == "Joueur 2" && piece.color == Colors.black);
+}
 
 void _onPieceSelected(int index) {
   setState(() {
@@ -189,9 +233,9 @@ void _onPieceSelected(int index) {
 
 
 
-Widget _buildCell(int index, double cellSize) {
+Widget _buildCell(int index, double cellSize,int indexJ1,int indexJ2) {
   bool isWhite = (index ~/ 8 % 2 == 0 && index % 8 % 2 == 0) || (index ~/ 8 % 2 == 1 && index % 8 % 2 == 1);
-  Color baseColor = isWhite ? const Color(0xFFEEEED2) : const Color(0xFF769656);
+  Color baseColor = isWhite ?  plateaux[widget.indexPlateau][0] : plateaux[widget.indexPlateau][1];
 
   Color cellColor = _selectedCell == index
     ? Colors.blueAccent.withValues(alpha: 0.4)
@@ -213,7 +257,7 @@ Widget _buildCell(int index, double cellSize) {
       height: cellSize,
       decoration: decoration,
       child: Center(
-        child: _board[index]?.buildPiece(cellSize * 0.75) ?? Container(),
+        child: _board[index]?.buildPiece(cellSize * 0.75,indexJ1,indexJ2) ?? Container(),
          // Affiche la pièce ou un container vide
       ),
     ),
@@ -254,7 +298,7 @@ Widget _buildCell(int index, double cellSize) {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 5),
-                        child: WidgetTimer(timer, key: _timerJoueur2),
+                        child:WidgetTimer(widget.timerValue, key: _timerJoueur2),
                       )
                     ],
                   ),
@@ -264,7 +308,7 @@ Widget _buildCell(int index, double cellSize) {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(8, (i) => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(8, (j) => _buildCell(i * 8 + j, cellSize)),
+                children: List.generate(8, (j) => _buildCell(i * 8 + j, cellSize,widget.indexJ1,widget.indexJ2)),
               )),
             ),
             Container(
@@ -287,7 +331,7 @@ Widget _buildCell(int index, double cellSize) {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 5),
-                    child: WidgetTimer(timer, key: _timerJoueur1),
+                    child: WidgetTimer(widget.timerValue, key: _timerJoueur1),
                   )
                 ],
               ),

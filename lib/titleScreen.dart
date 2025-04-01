@@ -1,8 +1,6 @@
-import 'dart:math' as math;
+import 'package:echec/ParametrePartie.dart';
 import 'package:flutter/material.dart';
-import 'widget_timer.dart';
-import 'dart:async';
-import 'ParametrePartie.dart';
+
 
 
 
@@ -35,63 +33,122 @@ class EcranTitre extends StatefulWidget {
 class _TitleScreenState extends State<EcranTitre> {
 
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body:Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(padding: const EdgeInsets.only(top:50),
-          child: Image.asset('assets/logo2.png',width: 200,height: 200,),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Stack(
+      children: [
+        // Image en fond
+        Positioned.fill(
+          child: Container(
+            margin: const EdgeInsets.only(top: 250), // Descend l'image de fond
+            child: Image.asset(
+              'assets/Plateau.png', // Remplacez par le chemin de votre image de fond
+              fit: BoxFit.cover, // Adapte l'image pour couvrir tout l'écran
+            ),
           ),
-          ElevatedButton(onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Parametrepartie()),
-              );
-          },
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-           
-           ),
-           child: const Text('Commencer'),
-           ),
-           Padding(
-            padding: const EdgeInsets.only(bottom: 50),
-            child: ElevatedButton(onPressed: () {
-              Navigator.pushNamed(context, '/parametres');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            child: const Text('Paramètres'),
-            ),
-            ),
+        ),
+        // Contenu principal
+        Column(
+          children: [
+            // Espace flexible pour pousser l'image un peu plus bas
+            const Spacer(flex: 2),
+            // Image centrée horizontalement
             Padding(
-              padding: const EdgeInsets.only(right: 20),
+              padding: const EdgeInsets.only(bottom: 20), // Espacement entre l'image et le bouton
+              child: Center(
+                child: Image.asset(
+                  'assets/logo2.png',
+                  width: 300,
+                  height: 300,
+                ),
+              ),
+            ),
+            // Bouton "Commencer" centré verticalement
+            const Spacer(flex: 1),
+            Center(
               child: ElevatedButton(
                 onPressed: () {
-                  print("Bouton droit appuyé");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Parametrepartie()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  textStyle: const TextStyle(fontSize: 16),
+                  backgroundColor: const Color(0xFFE7CD78),
+                  padding: EdgeInsets.zero,
+                  shape: const CircleBorder(),
+                  minimumSize: const Size(120, 120),
                 ),
-                child: const Text('Option 2'),
+                child: Image.asset(
+                  'assets/Icon.png', // Remplacez par le chemin de votre image
+                  width: 120, // Ajustez la largeur de l'image
+                  height: 120, // Ajustez la hauteur de l'image
+                ),
               ),
-              
             ),
-        ],
-      )
-    );
-  }
+            // Espace flexible pour pousser le bouton "Paramètres" vers le bas
+            const Spacer(flex: 3),
+            // Bouton "Paramètres" en bas à gauche
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start, // Aligne le bouton à gauche
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20), // Espacement par rapport au bord
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context){
+                    return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
+                    return AlertDialog(
+                      title: const Center(child:Text('Parametres'),),
+                      
+                      content:Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                            ],
+                          ),
+                        ],
+                      ),
+                      actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Ferme la boîte de dialogue
+                        },
+                        child: const Text('Fermer'),
+                      ),
+                    ],
+                    );
+                  },
+                );
+              },
+            );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE7CD78),
+                      padding: EdgeInsets.zero,
+                      shape: const CircleBorder(),
+                      minimumSize: const Size(80, 80), // Taille minimale du bouton
+                    ),
+                    child: Image.asset(
+                      'assets/Settings.png', // Remplacez par le chemin de votre image
+                      width: 50, // Ajustez la largeur de l'image
+                      height: 50, // Ajustez la hauteur de l'image
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 }
