@@ -73,10 +73,95 @@ int timerValue = 1000;
 
   @override
   Widget build(BuildContext context) {
+    double _currentVolume=0;
+    bool isOn=true;
 
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+
+      //Barre de parametre de l'application 
+      appBar: AppBar(
+      title: const Text('Paramètres de la Partie',style:TextStyle(color: Colors.white)),
+      backgroundColor: Colors.black, // Couleur de l'AppBar
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.settings, color: Colors.white), // Icône blanche
+          onPressed: () {
+
+                                 showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context){
+                    return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
+                    return AlertDialog(
+                      title: const Center(child:Text('Parametres',style : TextStyle(color:Colors.white)),),
+                      backgroundColor: const Color.fromARGB(255, 158, 158, 158),
+                      content:Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text("Musique",style: TextStyle(fontSize: 20, color: Colors.white) ),
+                          Row(
+                            
+                            mainAxisAlignment: MainAxisAlignment.center, // Centre les éléments
+                            children: [
+                              Icon(Icons.volume_off, size: 30, color: Colors.white),
+                              Expanded(child:Slider(
+                                  value: _currentVolume,
+                                  onChanged: (value) {
+                                  //FlutterVolumeController.setVolume(value);
+                                  setState(() {
+                                   _currentVolume = value;                      
+                                   });                                   
+                                  },
+
+                                  activeColor: const Color.fromARGB(255, 32, 111, 34)
+                              ),),
+                              Icon(Icons.volume_up, size: 30, color:Colors.white),
+
+                            ],
+                          ),
+                           Row(
+                            
+                            mainAxisAlignment: MainAxisAlignment.center, // Centre les éléments
+                            children: [
+                              Text("Mode assisté",style: TextStyle(fontSize: 20, color:Colors.white) ),
+                              Switch(
+                                value: isOn, // État du switch                              
+                                onChanged: (value) {
+                                  setState(() {
+                                    isOn = value;
+                                    });
+                                  },
+                                  activeColor: const Color.fromARGB(255, 32, 111, 34),
+                                )
+                              ]
+                            )
+
+                        ],
+
+                      ),
+                      actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Ferme la boîte de dialogue
+                        },
+                        child: const Text('Fermer',style: TextStyle(fontSize: 20, color:Colors.white) ),
+                      ),
+                    ],
+                    );
+                  },
+                );
+              },
+            ); // Ouvre le popup des paramètres
+           
+          },
+        ),
+      ],
+    ),
+
+    //Paramatre de la partie
       body: Center(
         child:Column(
           mainAxisAlignment: MainAxisAlignment.center,
