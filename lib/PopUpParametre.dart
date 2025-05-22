@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 
-double currentVolume=0;
-bool isOn=true;
-
 void showPopupParametres(BuildContext context, double currentVolume, bool isOn, Function(double) onVolumeChanged, Function(bool) onSwitchChanged) {
   showDialog(
     context: context,
@@ -11,8 +8,7 @@ void showPopupParametres(BuildContext context, double currentVolume, bool isOn, 
     builder: (BuildContext context) {
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
-          double _currentVolume = currentVolume;
-          bool _isOn = isOn;
+          
 
           return AlertDialog(
             title: const Center(
@@ -30,13 +26,15 @@ void showPopupParametres(BuildContext context, double currentVolume, bool isOn, 
                     const Icon(Icons.volume_off, size: 30, color: Colors.white),
                     Expanded(
                       child: Slider(
-                        value: _currentVolume,
+                        value: currentVolume,
                         onChanged: (value) {
                           setState(() {
-                            _currentVolume = value;
+                            currentVolume = value;
                           });
-                          onVolumeChanged(value);
+                          onVolumeChanged(value); // Notifie le parent
                         },
+                        min: 0.0,
+                        max: 1.0,
                         activeColor: const Color.fromARGB(255, 32, 111, 34),
                       ),
                     ),
@@ -48,10 +46,10 @@ void showPopupParametres(BuildContext context, double currentVolume, bool isOn, 
                   children: [
                     const Text("Mode assisté", style: TextStyle(fontSize: 20, color: Colors.white)),
                     Switch(
-                      value: _isOn,
+                      value: isOn,
                       onChanged: (value) {
                         setState(() {
-                          _isOn = value;
+                          isOn = value;
                         });
                         onSwitchChanged(value);
                       },

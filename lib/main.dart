@@ -18,7 +18,7 @@
     Widget build(BuildContext context) {
       return MaterialApp(
         title: 'Chess.fr',
-        home: const MyHomePage(indexJ1: 0,indexJ2: 0,indexPlateau: 0,timerValue: 1000,),
+        home: const MyHomePage(indexJ1: 0,indexJ2: 0,indexPlateau: 0,timerValue: 1000,currentVolume:0.0,isOn: true ,),
       );
     }
   }
@@ -30,8 +30,10 @@
     final int indexJ2;
     final int indexPlateau;
     final int timerValue;
+    final double currentVolume;
+    final bool isOn;
 
-    const MyHomePage({super.key, required this.indexJ1, required this.indexJ2,required this.indexPlateau,required this.timerValue,});
+    const MyHomePage({super.key, required this.indexJ1, required this.indexJ2,required this.indexPlateau,required this.timerValue,required this.currentVolume,required this.isOn});
 
     @override
     State<MyHomePage> createState() => _MyHomePageState();

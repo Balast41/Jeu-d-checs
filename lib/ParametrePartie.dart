@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'PopUpParametre.dart';
+import 'package:echec/PopUpParametre.dart';
 import 'main.dart';
 
 
@@ -364,7 +364,7 @@ int timerValue = 1000;
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,timerValue: timerValue,)),
+                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,timerValue: timerValue,currentVolume: currentVolume,isOn: isOn,)),
                   );
               },
               style:ElevatedButton.styleFrom(
