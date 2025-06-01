@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'Regles.dart';
 
 List<List<String>> pionsJ1=[
   ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png','assets/ChoixPions/Joueur1/PO.png','assets/ChoixPions/Joueur1/PA.png'],
@@ -46,15 +47,15 @@ abstract class Piece {
 
   Piece(this.name, this.color, this.player, this.x, this.y, {this.aBouge = false});
 
-  Widget buildPiece(double size,int indexJ1,int indexJ2) {
-    throw UnimplementedError('buildPiece() must be implemented in subclasses');
-  }
-  List<int> getPossibleMoves(List<Piece?> board);
+  Widget buildPiece(double size,int indexJ1,int indexJ2);
+
+  List<int> getPossibleMoves(List<Piece?> board, {bool ignoreKingSafety = false});
   
+  Piece clone();
 }
 
 class Roi extends Piece {
-  Roi(Color color, int player, int x,int y) : super("Roi", color, player, x,y);
+  Roi(Color color, int player, int x, int y, {bool aBouge = false}) : super("Roi", color, player, x, y, aBouge: aBouge);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
@@ -68,29 +69,46 @@ class Roi extends Piece {
   }
 
   @override
-  List<int> getPossibleMoves(List<Piece?> board){
-    List<int>moves=[];
+  List<int> getPossibleMoves(List<Piece?> board, {bool ignoreKingSafety = false}) {
+    List<int> moves = [];
     List<List<int>> directions = [
-      [1, 1],[1, 0],[1, -1],[0, 1],
-      [0, -1],[-1, 1],[-1, 0],[-1, -1],
+      [1, 1], [1, 0], [1, -1], [0, 1],
+      [0, -1], [-1, 1], [-1, 0], [-1, -1],
     ];
 
-    for(var dir in directions){
-      int newX=x+dir[0];
-      int newY=y+dir[1];
-      if(newX>=0 && newX<8 && newY>=0 && newY<8){
-        int index=newX+newY*8;
-        if(board[index]==null || board[index]!.color!=color){
-          moves.add(index);
+    for (var dir in directions) {
+      int newX = x + dir[0];
+      int newY = y + dir[1];
+      if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
+        int index = newY * 8 + newX;
+        if (board[index] == null || board[index]?.player != player) {
+          if (!ignoreKingSafety) {
+            // Simulation du déplacement
+            List<Piece?> copieBoard = List<Piece?>.from(board);
+            copieBoard[index] = Roi(color, player, newX, newY);
+            copieBoard[x + y * 8] = null;
+            // Vérifie que le roi ne serait pas en échec sur cette case
+            if (!Regles.estCaseAttaquee(copieBoard, index, player)) {
+              moves.add(index);
+            }
+          } else {
+            moves.add(index);
+          }
         }
       }
     }
+    if (!ignoreKingSafety) {
+      moves.addAll(Regles.getRoquesPossibles(board, player));
+    }
     return moves;
   }
+
+  @override
+  Piece clone() => Roi(color, player, x, y, aBouge: aBouge);
 }
 
 class Reine extends Piece {
-  Reine(Color color, int player, int x,int y) : super("Reine", color, player, x,y);
+  Reine(Color color, int player, int x, int y, {bool aBouge = false}) : super("Reine", color, player, x, y, aBouge: aBouge);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
@@ -103,7 +121,7 @@ class Reine extends Piece {
     );
   }
     @override
-  List<int> getPossibleMoves(List<Piece?> board) {
+  List<int> getPossibleMoves(List<Piece?> board, {bool ignoreKingSafety = false}) {
     List<int> moves = [];
     List<List<int>> directions = [
       [1, 0], [-1, 0], [0, 1], [0, -1], // Horizontal et vertical
@@ -131,10 +149,13 @@ class Reine extends Piece {
     }
     return moves;
   }
+
+  @override
+  Piece clone() => Reine(color, player, x, y, aBouge: aBouge);
 }
 
 class Tour extends Piece {
-  Tour(Color color, int player, int x,int y) : super("Tour", color, player, x,y);
+  Tour(Color color, int player, int x, int y, {bool aBouge = false}) : super("Tour", color, player, x, y, aBouge: aBouge);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
@@ -147,7 +168,7 @@ class Tour extends Piece {
     );
   }
     @override
-  List<int> getPossibleMoves(List<Piece?> board) {
+  List<int> getPossibleMoves(List<Piece?> board, {bool ignoreKingSafety = false}) {
     List<int> moves = [];
     List<List<int>> directions = [
       [1, 0], [-1, 0], [0, 1], [0, -1] // Horizontal et vertical
@@ -174,10 +195,13 @@ class Tour extends Piece {
     }
     return moves;
   }
+
+  @override
+  Piece clone() => Tour(color, player, x, y, aBouge: aBouge);
 }
 
 class Fou extends Piece {
-  Fou(Color color, int player, int x,int y) : super("Fou", color, player, x,y);
+  Fou(Color color, int player, int x, int y, {bool aBouge = false}) : super("Fou", color, player, x, y, aBouge: aBouge);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
@@ -190,7 +214,7 @@ class Fou extends Piece {
     );
   }
     @override
-  List<int> getPossibleMoves(List<Piece?> board) {
+  List<int> getPossibleMoves(List<Piece?> board, {bool ignoreKingSafety = false}) {
     List<int> moves = [];
     List<List<int>> directions = [
       [1, 1], [-1, -1], [1, -1], [-1, 1] // Diagonales
@@ -217,10 +241,13 @@ class Fou extends Piece {
     }
     return moves;
   }
+
+  @override
+  Piece clone() => Fou(color, player, x, y, aBouge: aBouge);
 }
 
 class Cavalier extends Piece {
-  Cavalier(Color color, int player, int x,int y) : super("Cavalier", color, player, x,y);
+  Cavalier(Color color, int player, int x, int y, {bool aBouge = false}) : super("Cavalier", color, player, x, y, aBouge: aBouge);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
@@ -233,7 +260,7 @@ class Cavalier extends Piece {
     );
   }
     @override
-  List<int> getPossibleMoves(List<Piece?> board) {
+  List<int> getPossibleMoves(List<Piece?> board, {bool ignoreKingSafety = false}) {
     List<int> moves = [];
     List<List<int>> jumps = [
       [2, 1], [2, -1], [-2, 1], [-2, -1],
@@ -252,10 +279,13 @@ class Cavalier extends Piece {
     }
     return moves;
   }
+
+  @override
+  Piece clone() => Cavalier(color, player, x, y, aBouge: aBouge);
 }
 
 class Pion extends Piece {
-  Pion(Color color, int player, int x,int y) : super("Pion", color, player, x,y);
+  Pion(Color color, int player, int x, int y, {bool aBouge = false}) : super("Pion", color, player, x, y, aBouge: aBouge);
 
   @override
   Widget buildPiece(double size,int indexJ1,int indexJ2) {
@@ -268,20 +298,22 @@ class Pion extends Piece {
     );
   }
     @override
-  List<int> getPossibleMoves(List<Piece?> board) {
+  List<int> getPossibleMoves(List<Piece?> board, {bool ignoreKingSafety = false}) {
     List<int> moves = [];
     int direction = color == Colors.white ? -1 : 1;
 
     // Avancer d'une case
     int forwardIndex = (y + direction) * 8 + x;
-    if (board[forwardIndex] == null) {
-      moves.add(forwardIndex);
+    if (forwardIndex >= 0 && forwardIndex < 64) {
+      if (board[forwardIndex] == null) {
+        moves.add(forwardIndex);
 
-      // Avancer de deux cases au premier coup
-      if ((color == Colors.white && y == 6) || (color == Colors.black && y == 1)) {
-        int doubleForwardIndex = (y + 2 * direction) * 8 + x;
-        if (board[doubleForwardIndex] == null) {
-          moves.add(doubleForwardIndex);
+        // Avancer de deux cases au premier coup
+        if ((color == Colors.white && y == 6) || (color == Colors.black && y == 1)) {
+          int doubleForwardIndex = (y + 2 * direction) * 8 + x;
+          if (board[doubleForwardIndex] == null) {
+            moves.add(doubleForwardIndex);
+          }
         }
       }
     }
@@ -300,4 +332,7 @@ class Pion extends Piece {
 
     return moves;
   }
+
+  @override
+  Piece clone() => Pion(color, player, x, y, aBouge: aBouge);
 }

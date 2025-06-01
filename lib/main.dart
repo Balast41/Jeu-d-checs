@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<List> pionsJ1;
   late List<List> pionsJ2;
   late List<List<Color>> plateaux;
+  List<Piece> piecesCapturees = [];
 
   late AudioPlayer _audioPlayer;
 
@@ -149,26 +150,98 @@ void _initializeBoard() {
     });
   }
 
+  void verifierFinDePartie() {
+    if (Regles.estEchecEtMat(_board, _joueur == "Joueur 1" ? 1 : 2)) {
+      print("Échec et mat !");
+      _finDePartie("Échec et mat !");
+    } else if (Regles.estPat(_board, _joueur == "Joueur 1" ? 1 : 2)) {
+      print("Pat !");
+      _finDePartie("Pat !");
+    } else if (Regles.estEnEchec(_board, _joueur == "Joueur 1" ? 1 : 2)) {
+      print("Échec !");
+      _afficherMessage("Échec !");
+    }
+  }
+
+  void _finDePartie(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Fin de partie"),
+          content: Text(message),
+        );
+      },
+    );
+  }
+
+  void _afficherMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   void _movePiece(int fromIndex, int toIndex) {
     setState(() {
-      // Déplace la pièce
       Piece? piece = _board[fromIndex];
       if (piece != null) {
+        // Vérifie si une pièce adverse est capturée
+        if (_board[toIndex] != null) {
+          piecesCapturees.add(_board[toIndex]!); // Ajoute la pièce capturée à la liste
+        }
+
+        // Déplace la pièce
         _board[toIndex] = piece;
         _board[fromIndex] = null;
 
-        // Mettez à jour les coordonnées de la pièce
+        // Met à jour les coordonnées de la pièce
         piece.x = toIndex % 8;
         piece.y = toIndex ~/ 8;
 
         piece.aBouge = true; // Marque la pièce comme ayant bougé
 
+        // Gère la promotion des pions
         if (piece is Pion) {
-          if ((piece.color == Colors.white && piece.y == 0) ||
-              (piece.color == Colors.black && piece.y == 7)) {
-            // Promouvoir le pion (par exemple, en reine par défaut)
-            _board[toIndex] = Reine(piece.color, piece.player, piece.x, piece.y);
+          if ((piece.player == 1 && piece.y == 0) || (piece.player == 2 && piece.y == 7)) {
+            _demanderPromotion(toIndex);
           }
+        }
+      }
+
+      if (piece is Roi) {
+        // Blancs
+        if (piece.player == 1 && fromIndex == 60 && toIndex == 62) {
+          // Petit roque blanc
+          _board[61] = _board[63];
+          _board[63] = null;
+          _board[61]?.x = 5;
+          _board[61]?.y = 7;
+          _board[61]?.aBouge = true;
+        }
+        if (piece.player == 1 && fromIndex == 60 && toIndex == 58) {
+          // Grand roque blanc
+          _board[59] = _board[56];
+          _board[56] = null;
+          _board[59]?.x = 3;
+          _board[59]?.y = 7;
+          _board[59]?.aBouge = true;
+        }
+        // Noirs
+        if (piece.player == 2 && fromIndex == 4 && toIndex == 6) {
+          // Petit roque noir
+          _board[5] = _board[7];
+          _board[7] = null;
+          _board[5]?.x = 5;
+          _board[5]?.y = 0;
+          _board[5]?.aBouge = true;
+        }
+        if (piece.player == 2 && fromIndex == 4 && toIndex == 2) {
+          // Grand roque noir
+          _board[3] = _board[0];
+          _board[0] = null;
+          _board[3]?.x = 3;
+          _board[3]?.y = 0;
+          _board[3]?.aBouge = true;
         }
       }
 
@@ -178,77 +251,109 @@ void _initializeBoard() {
 
       // Change de joueur
       _changeJoueur();
+
+      // Vérifie les règles de fin de partie
+      verifierFinDePartie();
     });
   }
 
-bool _isPlayerTurn(Piece piece) {
-  return (_joueur == "Joueur 1" && piece.color == Colors.white) ||
-         (_joueur == "Joueur 2" && piece.color == Colors.black);
-}
+  bool _isPlayerTurn(Piece piece) {
+    return (_joueur == "Joueur 1" && piece.player == 1) ||
+          (_joueur == "Joueur 2" && piece.player == 2);
+  }
 
-void _onPieceSelected(int index) {
-  setState(() {
-    if (_highlightedCells.contains(index)) {
-      Piece? piece = _board[_selectedCell!];
+  void _demanderPromotion(int index) {
+    final choix = ["Reine", "Tour", "Fou", "Cavalier"];
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Promotion"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: choix
+                .map((type) => ListTile(
+                      title: Text(type),
+                      onTap: () {
+                        setState(() {
+                          Regles.promotionPion(_board, index, type, _joueur == "Joueur 1" ? 1 : 2);
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ))
+                .toList(),
+          ),
+        );
+      },
+    );
+  }
 
-      // Vérifie si le mouvement est un roque
-      if (piece is Roi) {
-        int diff = index - _selectedCell!;
-        if (diff == 2) {
-          // Petit roque
-          if (Regles.petitRoque(_board, piece.color)) {
-            _changeJoueur();
-            return;
-          }
-        } else if (diff == -2) {
-          // Grand roque
-          if (Regles.grandRoque(_board, piece.color)) {
-            _changeJoueur();
-            return;
-          }
+  int? getRoiEnEchecIndex(int joueur) {
+    if (Regles.estEnEchec(_board, joueur)) {
+      for (var piece in _board) {
+        if (piece is Roi && piece.player == joueur) {
+          return piece.x + piece.y * 8;
         }
-      }
-      // Déplace la pièce vers une case mise en surbrillance
-      _movePiece(_selectedCell!, index);
-    } 
-    else {
-      // Désélectionne si on appuie ailleurs
-      Piece? piece = _board[index];
-      if (piece != null && _isPlayerTurn(piece)) {
-        // Vérifie si c'est le tour du joueur actif
-        _selectedCell = index;
-        _highlightedCells = piece.getPossibleMoves(_board);
-
-        // Ajoute les cases de roque si le roi est sélectionné
-        if (piece is Roi) {
-          if (Regles.petitRoquePossible(_board, piece.color)) {
-            _highlightedCells.add(index + 2); // Case pour le petit roque
-          }
-          if (Regles.grandRoquePossible(_board, piece.color)) {
-            _highlightedCells.add(index - 2); // Case pour le grand roque
-          }
-        }
-      } else {
-        // Désélectionne si ce n'est pas le tour du joueur
-        _selectedCell = null;
-        _highlightedCells = [];
       }
     }
-  });
-}
+    return null;
+  }
 
+  void _onPieceSelected(int index) {
+    setState(() {
+      if (_highlightedCells.contains(index)) {
+        // Déplace la pièce vers une case mise en surbrillance
+        Piece? piece = _board[_selectedCell!];
+
+        // Sinon, déplace la pièce normalement
+        _movePiece(_selectedCell!, index);
+      } else {
+        // Désélectionne si on appuie ailleurs
+        Piece? piece = _board[index];
+        if (piece != null && _isPlayerTurn(piece)) {
+          // Vérifie si c'est le tour du joueur actif
+          _selectedCell = index;
+          List<int> coupsPossibles = piece.getPossibleMoves(_board);
+          int joueur = _joueur == "Joueur 1" ? 1 : 2;
+          _highlightedCells = coupsPossibles.where((coup) {
+            // Simule le coup
+            List<Piece?> copieBoard = _board.map((p) => p?.clone()).toList();
+            Piece pieceClone = copieBoard[piece.x + piece.y * 8]!;
+            pieceClone.x = coup % 8;
+            pieceClone.y = (coup / 8).floor();
+            copieBoard[coup] = pieceClone;
+            copieBoard[piece.x + piece.y * 8] = null;
+            // Vérifie si le roi est toujours en échec après ce coup
+            return !Regles.estEnEchec(copieBoard, joueur);
+          }).toList();
+
+        } else {
+          // Désélectionne si ce n'est pas le tour du joueur
+          _selectedCell = null;
+          _highlightedCells = [];
+        }
+      }
+    });
+  }
 
 
 
 Widget _buildCell(int index, double cellSize,int indexJ1,int indexJ2) {
   bool isWhite = (index ~/ 8 % 2 == 0 && index % 8 % 2 == 0) || (index ~/ 8 % 2 == 1 && index % 8 % 2 == 1);
   Color baseColor = isWhite ?  plateaux[widget.indexPlateau][0] : plateaux[widget.indexPlateau][1];
+  
+  int? roiEchecIndex = getRoiEnEchecIndex(_joueur == "Joueur 1" ? 1 : 2);
 
-  Color cellColor = _selectedCell == index
-    ? Colors.blueAccent.withValues(alpha: 0.4)
-    : (_highlightedCells.contains(index)
-        ? Colors.yellowAccent.withValues(alpha: 0.4)
-        : baseColor);
+  Color cellColor;
+  if (index == roiEchecIndex) {
+    cellColor = Colors.redAccent.withValues(alpha: 0.7); // Case du roi en échec
+  } else if (_selectedCell == index) {
+    cellColor = Colors.blueAccent.withValues(alpha: 0.4);
+  } else if (_highlightedCells.contains(index)) {
+    cellColor = Colors.yellowAccent.withValues(alpha: 0.4);
+  } else {
+    cellColor = baseColor;
+  }
 
   BoxDecoration decoration = BoxDecoration(
     color: cellColor,
