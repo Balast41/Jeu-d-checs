@@ -1,9 +1,11 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'widget_timer.dart';
+import 'ParametrePartie.dart';
 import 'Pieces.dart';
 import 'Regles.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'titleScreen.dart';
 
 
 void main() {
@@ -41,9 +43,13 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<List> pionsJ1;
   late List<List> pionsJ2;
   late List<List<Color>> plateaux;
+  List<Piece> piecesCapturees = [];
+
   late AudioPlayer _audioPlayer;
 
-
+  void _playBackgroundMusic() async {
+  await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
+  await _audioPlayer.play(AssetSource('musique/J.mp3'));} // Joue la musique
 
 
   final List<Piece?> _board = List.filled(64,null);
@@ -56,19 +62,16 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _highlightedCells = [];
   int? _selectedCell;
   
-    void _playBackgroundMusic() async {
-    await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
-    await _audioPlayer.play(AssetSource('musique/J.mp3')); // Joue la musique
-  }
+
   @override
   void initState() {
     super.initState();
     _initializeBoard();
-    _audioPlayer = AudioPlayer();
-    _playBackgroundMusic();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _timerJoueur1.currentState?.startTimer();
     });
+    _audioPlayer = AudioPlayer();
+    _playBackgroundMusic();
 
 pionsJ1=[
   ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png','assets/ChoixPions/Joueur1/PO.png','assets/ChoixPions/Joueur1/PA.png','assets/ChoixPions/Joueur1/PCR.png'],
@@ -77,6 +80,7 @@ pionsJ1=[
   ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png','assets/ChoixPions/Joueur1/FO.png','assets/ChoixPions/Joueur1/FA.png','assets/ChoixPions/Joueur1/FCR.png'],
   ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png','assets/ChoixPions/Joueur1/TO.png','assets/ChoixPions/Joueur1/TA.png','assets/ChoixPions/Joueur1/TCR.png'],
   ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png','assets/ChoixPions/Joueur1/CO.png','assets/ChoixPions/Joueur1/CA.png','assets/ChoixPions/Joueur1/CCR.png']
+  
 ];
 
 pionsJ2=[
@@ -84,7 +88,7 @@ pionsJ2=[
   ['assets/ChoixPions/Joueur2/RN.png', 'assets/ChoixPions/Joueur2/RS.png','assets/ChoixPions/Joueur2/RO.png','assets/ChoixPions/Joueur2/RA.png','assets/ChoixPions/Joueur2/RCR.png'],
   ['assets/ChoixPions/Joueur2/DN.png', 'assets/ChoixPions/Joueur2/DA.png','assets/ChoixPions/Joueur2/DO.png','assets/ChoixPions/Joueur2/DAr.png','assets/ChoixPions/Joueur2/DCR.png'],
   ['assets/ChoixPions/Joueur2/FN.png', 'assets/ChoixPions/Joueur2/FE.png','assets/ChoixPions/Joueur2/FO.png','assets/ChoixPions/Joueur2/FA.png','assets/ChoixPions/Joueur2/FCR.png'],
-  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png','assets/ChoixPions/Joueur2/TO.png','assets/ChoixPions/Joueur2/TA.png','assets/ChoixPions/Joueur1/TCR.png'],
+  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png','assets/ChoixPions/Joueur2/TO.png','assets/ChoixPions/Joueur2/TA.png','assets/ChoixPions/Joueur2/TCR.png'],
   ['assets/ChoixPions/Joueur2/CN.png', 'assets/ChoixPions/Joueur2/CC.png','assets/ChoixPions/Joueur2/CO.png','assets/ChoixPions/Joueur2/CA.png','assets/ChoixPions/Joueur2/CCR.png']
 ];
 
@@ -104,33 +108,33 @@ plateaux=[
 
 void _initializeBoard() {
   // Initialisation des pièces sur le plateau
-  _board[0] = Tour(Colors.black, 0, 0);
-  _board[1] = Cavalier(Colors.black, 1, 0);
-  _board[2] = Fou(Colors.black, 2, 0);
-  _board[3] = Reine(Colors.black, 3, 0);
-  _board[4] = Roi(Colors.black, 4, 0);
-  _board[5] = Fou(Colors.black, 5, 0);
-  _board[6] = Cavalier(Colors.black, 6, 0);
-  _board[7] = Tour(Colors.black, 7, 0);
+  _board[0] = Tour(Colors.black, 2, 0, 0);
+  _board[1] = Cavalier(Colors.black, 2, 1, 0);
+  _board[2] = Fou(Colors.black, 2, 2, 0);
+  _board[3] = Reine(Colors.black, 2, 3, 0);
+  _board[4] = Roi(Colors.black, 2, 4, 0);
+  _board[5] = Fou(Colors.black, 2, 5, 0);
+  _board[6] = Cavalier(Colors.black, 2, 6, 0);
+  _board[7] = Tour(Colors.black, 2, 7, 0);
 
   // Placement des pions noirs
   for (int i = 8; i < 16; i++) {
-    _board[i] = Pion(Colors.black, i % 8, 1);
+    _board[i] = Pion(Colors.black, 2, i % 8, 1);
   }
 
   // Placement des pions blancs
   for (int i = 48; i < 56; i++) {
-    _board[i] = Pion(Colors.white, i % 8, 6);
+    _board[i] = Pion(Colors.white, 1, i % 8, 6);
   }
 
-  _board[56] = Tour(Colors.white, 0, 7);
-  _board[57] = Cavalier(Colors.white, 1, 7);
-  _board[58] = Fou(Colors.white, 2, 7);
-  _board[59] = Reine(Colors.white, 3, 7);
-  _board[60] = Roi(Colors.white, 4, 7);
-  _board[61] = Fou(Colors.white, 5, 7);
-  _board[62] = Cavalier(Colors.white, 6, 7);
-  _board[63] = Tour(Colors.white, 7, 7);
+  _board[56] = Tour(Colors.white, 1, 0, 7);
+  _board[57] = Cavalier(Colors.white, 1, 1, 7);
+  _board[58] = Fou(Colors.white, 1, 2, 7);
+  _board[59] = Reine(Colors.white, 1, 3, 7);
+  _board[60] = Roi(Colors.white, 1, 4, 7);
+  _board[61] = Fou(Colors.white, 1, 5, 7);
+  _board[62] = Cavalier(Colors.white, 1, 6, 7);
+  _board[63] = Tour(Colors.white, 1, 7, 7);
 }
 
   void _changeJoueur() {
@@ -147,26 +151,115 @@ void _initializeBoard() {
     });
   }
 
+  void verifierFinDePartie() {
+    if (Regles.estEchecEtMat(_board, _joueur == "Joueur 1" ? 1 : 2)) {
+      print("Échec et mat !");
+      _finDePartie("Échec et mat !");
+    } else if (Regles.estPat(_board, _joueur == "Joueur 1" ? 1 : 2)) {
+      print("Pat !");
+      _finDePartie("Pat !");
+    } else if (Regles.estEnEchec(_board, _joueur == "Joueur 1" ? 1 : 2)) {
+      print("Échec !");
+      _afficherMessage("Échec !");
+    }
+  }
+
+  void _finDePartie(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Fin de partie"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Ferme la pop-up
+              },
+              child: const Text("Fermer"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const EcranTitre()),
+                  (route) => false,
+                );
+              },
+              child: const Text("Retour à l'écran titre"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _afficherMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   void _movePiece(int fromIndex, int toIndex) {
     setState(() {
-      // Déplace la pièce
       Piece? piece = _board[fromIndex];
       if (piece != null) {
+        // Vérifie si une pièce adverse est capturée
+        if (_board[toIndex] != null) {
+          piecesCapturees.add(_board[toIndex]!); // Ajoute la pièce capturée à la liste
+        }
+
+        // Déplace la pièce
         _board[toIndex] = piece;
         _board[fromIndex] = null;
 
-        // Mettez à jour les coordonnées de la pièce
+        // Met à jour les coordonnées de la pièce
         piece.x = toIndex % 8;
         piece.y = toIndex ~/ 8;
 
         piece.aBouge = true; // Marque la pièce comme ayant bougé
 
+        // Gère la promotion des pions
         if (piece is Pion) {
-          if ((piece.color == Colors.white && piece.y == 0) ||
-              (piece.color == Colors.black && piece.y == 7)) {
-            // Promouvoir le pion (par exemple, en reine par défaut)
-            _board[toIndex] = Reine(piece.color, piece.x, piece.y);
+          if ((piece.player == 1 && piece.y == 0) || (piece.player == 2 && piece.y == 7)) {
+            _demanderPromotion(toIndex);
           }
+        }
+      }
+
+      if (piece is Roi) {
+        // Blancs
+        if (piece.player == 1 && fromIndex == 60 && toIndex == 62) {
+          // Petit roque blanc
+          _board[61] = _board[63];
+          _board[63] = null;
+          _board[61]?.x = 5;
+          _board[61]?.y = 7;
+          _board[61]?.aBouge = true;
+        }
+        if (piece.player == 1 && fromIndex == 60 && toIndex == 58) {
+          // Grand roque blanc
+          _board[59] = _board[56];
+          _board[56] = null;
+          _board[59]?.x = 3;
+          _board[59]?.y = 7;
+          _board[59]?.aBouge = true;
+        }
+        // Noirs
+        if (piece.player == 2 && fromIndex == 4 && toIndex == 6) {
+          // Petit roque noir
+          _board[5] = _board[7];
+          _board[7] = null;
+          _board[5]?.x = 5;
+          _board[5]?.y = 0;
+          _board[5]?.aBouge = true;
+        }
+        if (piece.player == 2 && fromIndex == 4 && toIndex == 2) {
+          // Grand roque noir
+          _board[3] = _board[0];
+          _board[0] = null;
+          _board[3]?.x = 3;
+          _board[3]?.y = 0;
+          _board[3]?.aBouge = true;
         }
       }
 
@@ -176,77 +269,109 @@ void _initializeBoard() {
 
       // Change de joueur
       _changeJoueur();
+
+      // Vérifie les règles de fin de partie
+      verifierFinDePartie();
     });
   }
 
-bool _isPlayerTurn(Piece piece) {
-  return (_joueur == "Joueur 1" && piece.color == Colors.white) ||
-         (_joueur == "Joueur 2" && piece.color == Colors.black);
-}
+  bool _isPlayerTurn(Piece piece) {
+    return (_joueur == "Joueur 1" && piece.player == 1) ||
+          (_joueur == "Joueur 2" && piece.player == 2);
+  }
 
-void _onPieceSelected(int index) {
-  setState(() {
-    if (_highlightedCells.contains(index)) {
-      Piece? piece = _board[_selectedCell!];
+  void _demanderPromotion(int index) {
+    final choix = ["Reine", "Tour", "Fou", "Cavalier"];
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Promotion"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: choix
+                .map((type) => ListTile(
+                      title: Text(type),
+                      onTap: () {
+                        setState(() {
+                          Regles.promotionPion(_board, index, type, _joueur == "Joueur 1" ? 1 : 2);
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ))
+                .toList(),
+          ),
+        );
+      },
+    );
+  }
 
-      // Vérifie si le mouvement est un roque
-      if (piece is Roi) {
-        int diff = index - _selectedCell!;
-        if (diff == 2) {
-          // Petit roque
-          if (Regles.petitRoque(_board, piece.color)) {
-            _changeJoueur();
-            return;
-          }
-        } else if (diff == -2) {
-          // Grand roque
-          if (Regles.grandRoque(_board, piece.color)) {
-            _changeJoueur();
-            return;
-          }
+  int? getRoiEnEchecIndex(int joueur) {
+    if (Regles.estEnEchec(_board, joueur)) {
+      for (var piece in _board) {
+        if (piece is Roi && piece.player == joueur) {
+          return piece.x + piece.y * 8;
         }
-      }
-      // Déplace la pièce vers une case mise en surbrillance
-      _movePiece(_selectedCell!, index);
-    } 
-    else {
-      // Désélectionne si on appuie ailleurs
-      Piece? piece = _board[index];
-      if (piece != null && _isPlayerTurn(piece)) {
-        // Vérifie si c'est le tour du joueur actif
-        _selectedCell = index;
-        _highlightedCells = piece.getPossibleMoves(_board);
-
-        // Ajoute les cases de roque si le roi est sélectionné
-        if (piece is Roi) {
-          if (Regles.petitRoquePossible(_board, piece.color)) {
-            _highlightedCells.add(index + 2); // Case pour le petit roque
-          }
-          if (Regles.grandRoquePossible(_board, piece.color)) {
-            _highlightedCells.add(index - 2); // Case pour le grand roque
-          }
-        }
-      } else {
-        // Désélectionne si ce n'est pas le tour du joueur
-        _selectedCell = null;
-        _highlightedCells = [];
       }
     }
-  });
-}
+    return null;
+  }
 
+  void _onPieceSelected(int index) {
+    setState(() {
+      if (_highlightedCells.contains(index)) {
+        // Déplace la pièce vers une case mise en surbrillance
+        Piece? piece = _board[_selectedCell!];
+
+        // Sinon, déplace la pièce normalement
+        _movePiece(_selectedCell!, index);
+      } else {
+        // Désélectionne si on appuie ailleurs
+        Piece? piece = _board[index];
+        if (piece != null && _isPlayerTurn(piece)) {
+          // Vérifie si c'est le tour du joueur actif
+          _selectedCell = index;
+          List<int> coupsPossibles = piece.getPossibleMoves(_board);
+          int joueur = _joueur == "Joueur 1" ? 1 : 2;
+          _highlightedCells = coupsPossibles.where((coup) {
+            // Simule le coup
+            List<Piece?> copieBoard = _board.map((p) => p?.clone()).toList();
+            Piece pieceClone = copieBoard[piece.x + piece.y * 8]!;
+            pieceClone.x = coup % 8;
+            pieceClone.y = (coup / 8).floor();
+            copieBoard[coup] = pieceClone;
+            copieBoard[piece.x + piece.y * 8] = null;
+            // Vérifie si le roi est toujours en échec après ce coup
+            return !Regles.estEnEchec(copieBoard, joueur);
+          }).toList();
+
+        } else {
+          // Désélectionne si ce n'est pas le tour du joueur
+          _selectedCell = null;
+          _highlightedCells = [];
+        }
+      }
+    });
+  }
 
 
 
 Widget _buildCell(int index, double cellSize,int indexJ1,int indexJ2) {
   bool isWhite = (index ~/ 8 % 2 == 0 && index % 8 % 2 == 0) || (index ~/ 8 % 2 == 1 && index % 8 % 2 == 1);
   Color baseColor = isWhite ?  plateaux[widget.indexPlateau][0] : plateaux[widget.indexPlateau][1];
+  
+  int? roiEchecIndex = getRoiEnEchecIndex(_joueur == "Joueur 1" ? 1 : 2);
 
-  Color cellColor = _selectedCell == index
-    ? Colors.blueAccent.withValues(alpha: 0.4)
-    : (_highlightedCells.contains(index)
-        ? Colors.yellowAccent.withValues(alpha: 0.4)
-        : baseColor);
+  Color cellColor;
+  if (index == roiEchecIndex) {
+    cellColor = Colors.redAccent.withValues(alpha: 0.7); // Case du roi en échec
+  } else if (_selectedCell == index) {
+    cellColor = Colors.blueAccent.withValues(alpha: 0.4);
+  } else if (_highlightedCells.contains(index)) {
+    cellColor = Colors.yellowAccent.withValues(alpha: 0.4);
+  } else {
+    cellColor = baseColor;
+  }
 
   BoxDecoration decoration = BoxDecoration(
     color: cellColor,

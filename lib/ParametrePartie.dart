@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'main.dart';
 import 'package:audioplayers/audioplayers.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -39,9 +41,10 @@ class Parametrepartie extends StatefulWidget {
 }
 
 class _ParametrePartieState extends State<Parametrepartie> {
+
   late AudioPlayer _audioPlayer;
 
-    @override
+  @override
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
@@ -50,10 +53,9 @@ class _ParametrePartieState extends State<Parametrepartie> {
 
 
 
-    void _playBackgroundMusic() async {
-    await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
-    await _audioPlayer.play(AssetSource('musique/PP.mp3')); // Joue la musique
-  }
+  void _playBackgroundMusic() async {
+  await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
+  await _audioPlayer.play(AssetSource('musique/PP.mp3'));} // Joue la musique
 
 final List<String> choixPionsJ1=[
   'assets/ChoixPions/Joueur1/PB.png',
@@ -127,7 +129,7 @@ int timerValue = 1000;
                       textAlign: TextAlign.center,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: '10',
+                        hintText: 'MM',
                       ),
                     ),
                   ),
@@ -354,7 +356,7 @@ int timerValue = 1000;
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                 _audioPlayer.stop();
+                _audioPlayer.stop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,timerValue: timerValue,)),
