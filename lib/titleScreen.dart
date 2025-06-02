@@ -1,5 +1,6 @@
 import 'package:echec/ParametrePartie.dart';
 import 'package:flutter/material.dart';
+import 'package:echec/PopUpParametre.dart';
 
 
 void main() {
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Chess.fr',
       home: const EcranTitre(),
@@ -27,10 +29,12 @@ class EcranTitre extends StatefulWidget {
 }
 
 class _TitleScreenState extends State<EcranTitre> {
-
+  double currentVolume = 0.5; // Valeur initiale du volume
+  bool isOn = true; // Valeur initiale du switch
 
 @override
 Widget build(BuildContext context) {
+
   return Scaffold(
     body: Stack(
       children: [
@@ -67,7 +71,7 @@ Widget build(BuildContext context) {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Parametrepartie()),
+                    MaterialPageRoute(builder: (context) => Parametrepartie(currentVolume: currentVolume, isOn: isOn)),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -93,38 +97,13 @@ Widget build(BuildContext context) {
                   padding: const EdgeInsets.all(20), // Espacement par rapport au bord
                   child: ElevatedButton(
                     onPressed: () {
-                      showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context){
-                    return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
-                    return AlertDialog(
-                      title: const Center(child:Text('Parametres'),),
-                      
-                      content:Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                            ],
-                          ),
-                        ],
-                      ),
-                      actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); // Ferme la boîte de dialogue
-                        },
-                        child: const Text('Fermer'),
-                      ),
-                    ],
-                    );
-                  },
-                );
-              },
-            );
+                      showPopupParametres(
+                        context,
+                        currentVolume,
+                        isOn,
+                        (value) => setState(() => currentVolume = value),
+                        (value) => setState(() => isOn = value),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFE7CD78),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'main.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:echec/PopUpParametre.dart';
 
 
 void main() {
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const Parametrepartie(),
+      home: Parametrepartie(currentVolume: 0.5, isOn: true),
     );
   }
 }
@@ -34,7 +35,9 @@ class MyApp extends StatelessWidget {
 
 
 class Parametrepartie extends StatefulWidget {
-  const Parametrepartie({super.key});
+  final double currentVolume; // Volume actuel
+  final bool isOn; // État du switch
+  const Parametrepartie({super.key,required this.currentVolume, required this.isOn});
 
   @override
   State<Parametrepartie> createState() => _ParametrePartieState();
@@ -43,10 +46,14 @@ class Parametrepartie extends StatefulWidget {
 class _ParametrePartieState extends State<Parametrepartie> {
 
   late AudioPlayer _audioPlayer;
+  late double currentVolume; // Volume initial, vous pouvez le modifier
+  late bool isOn; // État initial du switch, vous pouvez le modifier
 
   @override
   void initState() {
     super.initState();
+    currentVolume = widget.currentVolume; // Récupère le volume initial
+    isOn = widget.isOn; // Récupère l'état initial du switch
     _audioPlayer = AudioPlayer();
     _playBackgroundMusic();
   }
@@ -54,8 +61,11 @@ class _ParametrePartieState extends State<Parametrepartie> {
 
 
   void _playBackgroundMusic() async {
-  await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
-  await _audioPlayer.play(AssetSource('musique/PP.mp3'));} // Joue la musique
+    await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
+    await _audioPlayer.play(AssetSource('musique/PP.mp3')); // Joue la musique
+    await _audioPlayer.setVolume(currentVolume); // Définit le volume initial (remplacez 0 par la valeur souhaitée)
+  }
+
 
 final List<String> choixPionsJ1=[
   'assets/ChoixPions/Joueur1/PB.png',
@@ -89,12 +99,36 @@ int indexPlateau=0;
 int timerValue = 1000;
 
 
-  @override
+   @override
   Widget build(BuildContext context) {
-
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+
+      //Barre de parametre de l'application 
+      appBar: AppBar(
+      title: const Text('Paramètres de Partie',style:TextStyle(color: Colors.white)),
+      backgroundColor: Colors.black, // Couleur de l'AppBar
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.settings, color: Colors.white), // Icône blanche
+          onPressed: () {
+              showPopupParametres(
+                context,
+                currentVolume,
+                isOn,
+                (value){ setState(() => currentVolume = value);
+                  _audioPlayer.setVolume(currentVolume); // <-- AJOUTE CETTE LIGNE
+            },
+                
+                (value) => setState(() => isOn = value),
+              );
+            },
+        ),
+      ],
+    ),
+
+    //Paramatre de la partie
       body: Center(
         child:Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -356,10 +390,9 @@ int timerValue = 1000;
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                _audioPlayer.stop();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,timerValue: timerValue,)),
+                  MaterialPageRoute(builder: (context) => MyHomePage(indexJ1:indexJ1,indexJ2:indexJ2,indexPlateau:indexPlateau,timerValue: timerValue,currentVolume: currentVolume,isOn: isOn,)),
                   );
               },
               style:ElevatedButton.styleFrom(

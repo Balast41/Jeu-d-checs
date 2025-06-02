@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chess.fr',
-      home: const MyHomePage(indexJ1: 0,indexJ2: 0,indexPlateau: 0,timerValue: 1000,),
+      home: const EcranTitre(),
     );
   }
 }
@@ -32,8 +32,10 @@ class MyHomePage extends StatefulWidget {
   final int indexJ2;
   final int indexPlateau;
   final int timerValue;
+  final double currentVolume;
+  final bool isOn;
 
-  const MyHomePage({super.key, required this.indexJ1, required this.indexJ2,required this.indexPlateau,required this.timerValue,});
+  const MyHomePage({super.key, required this.indexJ1, required this.indexJ2,required this.indexPlateau,required this.timerValue, required this.currentVolume, required this.isOn});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -44,12 +46,15 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<List> pionsJ2;
   late List<List<Color>> plateaux;
   List<Piece> piecesCapturees = [];
+  List<int> _coupsPossiblesSansAffichage = [];
 
   late AudioPlayer _audioPlayer;
 
   void _playBackgroundMusic() async {
   await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
-  await _audioPlayer.play(AssetSource('musique/J.mp3'));} // Joue la musique
+  await _audioPlayer.play(AssetSource('musique/J.mp3'));
+  await _audioPlayer.setVolume(widget.currentVolume); // Définit le volume de la musique
+  } // Joue la musique
 
 
   final List<Piece?> _board = List.filled(64,null);
@@ -331,6 +336,7 @@ void _initializeBoard() {
         if (piece != null && _isPlayerTurn(piece)) {
           // Vérifie si c'est le tour du joueur actif
           _selectedCell = index;
+        if(widget.isOn){
           List<int> coupsPossibles = piece.getPossibleMoves(_board);
           int joueur = _joueur == "Joueur 1" ? 1 : 2;
           _highlightedCells = coupsPossibles.where((coup) {
@@ -344,6 +350,38 @@ void _initializeBoard() {
             // Vérifie si le roi est toujours en échec après ce coup
             return !Regles.estEnEchec(copieBoard, joueur);
           }).toList();
+        } else {
+          // On ne surligne rien, mais on garde les coups possibles pour la logique
+          List<int> coupsPossibles = piece.getPossibleMoves(_board);
+          int joueur = _joueur == "Joueur 1" ? 1 : 2;
+          _highlightedCells = []; // Pas d'affichage
+          // On stocke les coups légaux dans une variable temporaire
+          _coupsPossiblesSansAffichage = coupsPossibles.where((coup) {
+            List<Piece?> copieBoard = _board.map((p) => p?.clone()).toList();
+            Piece pieceClone = copieBoard[piece.x + piece.y * 8]!;
+            pieceClone.x = coup % 8;
+            pieceClone.y = (coup / 8).floor();
+            copieBoard[coup] = pieceClone;
+            copieBoard[piece.x + piece.y * 8] = null;
+            return !Regles.estEnEchec(copieBoard, joueur);
+          }).toList();
+        }
+        } else if (_selectedCell != null) {
+        // Si une pièce est sélectionnée, on tente de la déplacer même si la case n'est pas surlignée
+        Piece? piece = _board[_selectedCell!];
+        if (piece != null) {
+          List<int> coupsPossibles;
+          if (widget.isOn) {
+            coupsPossibles = _highlightedCells;
+          } else {
+            coupsPossibles = _coupsPossiblesSansAffichage;
+          }
+          if (coupsPossibles.contains(index)) {
+            _movePiece(_selectedCell!, index);
+          } else {
+            _selectedCell = null;
+          }
+        }
 
         } else {
           // Désélectionne si ce n'est pas le tour du joueur
