@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'widget_timer.dart';
-import 'ParametrePartie.dart';
 import 'Pieces.dart';
 import 'Regles.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 
 void main() {
@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<List> pionsJ1;
   late List<List> pionsJ2;
   late List<List<Color>> plateaux;
+  late AudioPlayer _audioPlayer;
 
 
 
@@ -55,32 +56,36 @@ class _MyHomePageState extends State<MyHomePage> {
   List<int> _highlightedCells = [];
   int? _selectedCell;
   
-
+    void _playBackgroundMusic() async {
+    await _audioPlayer.setReleaseMode(ReleaseMode.loop); // Boucle la musique
+    await _audioPlayer.play(AssetSource('musique/J.mp3')); // Joue la musique
+  }
   @override
   void initState() {
     super.initState();
     _initializeBoard();
+    _audioPlayer = AudioPlayer();
+    _playBackgroundMusic();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _timerJoueur1.currentState?.startTimer();
     });
 
 pionsJ1=[
-  ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png','assets/ChoixPions/Joueur1/PO.png','assets/ChoixPions/Joueur1/PA.png'],
-  ['assets/ChoixPions/Joueur1/RB.png', 'assets/ChoixPions/Joueur1/RS.png','assets/ChoixPions/Joueur1/RO.png','assets/ChoixPions/Joueur1/RA.png'],
-  ['assets/ChoixPions/Joueur1/DB.png', 'assets/ChoixPions/Joueur1/DA.png','assets/ChoixPions/Joueur1/DO.png','assets/ChoixPions/Joueur1/DAr.png'],
-  ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png','assets/ChoixPions/Joueur1/FO.png','assets/ChoixPions/Joueur1/FA.png'],
-  ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png','assets/ChoixPions/Joueur1/TO.png','assets/ChoixPions/Joueur1/TA.png'],
-  ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png','assets/ChoixPions/Joueur1/CO.png','assets/ChoixPions/Joueur1/CA.png']
-  
+  ['assets/ChoixPions/Joueur1/PB.png', 'assets/ChoixPions/Joueur1/CP.png','assets/ChoixPions/Joueur1/PO.png','assets/ChoixPions/Joueur1/PA.png','assets/ChoixPions/Joueur1/PCR.png'],
+  ['assets/ChoixPions/Joueur1/RB.png', 'assets/ChoixPions/Joueur1/RS.png','assets/ChoixPions/Joueur1/RO.png','assets/ChoixPions/Joueur1/RA.png','assets/ChoixPions/Joueur1/RCR.png'],
+  ['assets/ChoixPions/Joueur1/DB.png', 'assets/ChoixPions/Joueur1/DA.png','assets/ChoixPions/Joueur1/DO.png','assets/ChoixPions/Joueur1/DAr.png','assets/ChoixPions/Joueur1/DCR.png'],
+  ['assets/ChoixPions/Joueur1/FB.png', 'assets/ChoixPions/Joueur1/FE.png','assets/ChoixPions/Joueur1/FO.png','assets/ChoixPions/Joueur1/FA.png','assets/ChoixPions/Joueur1/FCR.png'],
+  ['assets/ChoixPions/Joueur1/TB.png', 'assets/ChoixPions/Joueur1/TG.png','assets/ChoixPions/Joueur1/TO.png','assets/ChoixPions/Joueur1/TA.png','assets/ChoixPions/Joueur1/TCR.png'],
+  ['assets/ChoixPions/Joueur1/CB.png', 'assets/ChoixPions/Joueur1/CC.png','assets/ChoixPions/Joueur1/CO.png','assets/ChoixPions/Joueur1/CA.png','assets/ChoixPions/Joueur1/CCR.png']
 ];
 
 pionsJ2=[
-  ['assets/ChoixPions/Joueur2/PN.png', 'assets/ChoixPions/Joueur2/CP.png','assets/ChoixPions/Joueur2/PO.png','assets/ChoixPions/Joueur2/PA.png'],
-  ['assets/ChoixPions/Joueur2/RN.png', 'assets/ChoixPions/Joueur2/RS.png','assets/ChoixPions/Joueur2/RO.png','assets/ChoixPions/Joueur2/RA.png'],
-  ['assets/ChoixPions/Joueur2/DN.png', 'assets/ChoixPions/Joueur2/DA.png','assets/ChoixPions/Joueur2/DO.png','assets/ChoixPions/Joueur2/DAr.png'],
-  ['assets/ChoixPions/Joueur2/FN.png', 'assets/ChoixPions/Joueur2/FE.png','assets/ChoixPions/Joueur2/FO.png','assets/ChoixPions/Joueur2/FA.png'],
-  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png','assets/ChoixPions/Joueur2/TO.png','assets/ChoixPions/Joueur2/TA.png'],
-  ['assets/ChoixPions/Joueur2/CN.png', 'assets/ChoixPions/Joueur2/CC.png','assets/ChoixPions/Joueur2/CO.png','assets/ChoixPions/Joueur2/CA.png']
+  ['assets/ChoixPions/Joueur2/PN.png', 'assets/ChoixPions/Joueur2/CP.png','assets/ChoixPions/Joueur2/PO.png','assets/ChoixPions/Joueur2/PA.png','assets/ChoixPions/Joueur2/PCR.png'],
+  ['assets/ChoixPions/Joueur2/RN.png', 'assets/ChoixPions/Joueur2/RS.png','assets/ChoixPions/Joueur2/RO.png','assets/ChoixPions/Joueur2/RA.png','assets/ChoixPions/Joueur2/RCR.png'],
+  ['assets/ChoixPions/Joueur2/DN.png', 'assets/ChoixPions/Joueur2/DA.png','assets/ChoixPions/Joueur2/DO.png','assets/ChoixPions/Joueur2/DAr.png','assets/ChoixPions/Joueur2/DCR.png'],
+  ['assets/ChoixPions/Joueur2/FN.png', 'assets/ChoixPions/Joueur2/FE.png','assets/ChoixPions/Joueur2/FO.png','assets/ChoixPions/Joueur2/FA.png','assets/ChoixPions/Joueur2/FCR.png'],
+  ['assets/ChoixPions/Joueur2/TN.png', 'assets/ChoixPions/Joueur2/TG.png','assets/ChoixPions/Joueur2/TO.png','assets/ChoixPions/Joueur2/TA.png','assets/ChoixPions/Joueur1/TCR.png'],
+  ['assets/ChoixPions/Joueur2/CN.png', 'assets/ChoixPions/Joueur2/CC.png','assets/ChoixPions/Joueur2/CO.png','assets/ChoixPions/Joueur2/CA.png','assets/ChoixPions/Joueur2/CCR.png']
 ];
 
 plateaux=[

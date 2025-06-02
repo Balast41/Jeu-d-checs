@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  audioplayers: ^6.4.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -84,6 +85,8 @@ flutter:
     - assets/Icon.png
     - assets/Settings.png
     - assets/Plateau.png
+    - assets/musique/PP.mp3
+    - assets/musique/J.mp3
 
 
   # The following line ensures that the Material Icons font is
